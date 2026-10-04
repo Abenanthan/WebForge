@@ -1,0 +1,29 @@
+# Dependencies & builds
+node_modules/
+frontend/dist/
+.vite/
+
+# Secrets
+backend/config/.env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Runtime data (user files, logs)
+backend/storage/sandbox/*
+backend/storage/logs/*
+!backend/storage/**/.gitkeep
+
+# Test artifacts
+frontend/playwright-report/
+frontend/test-results/
+coverage/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+*.log

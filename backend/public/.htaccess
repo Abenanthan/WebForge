@@ -1,0 +1,16 @@
+# Route every request that is not a real file to the front controller.
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Must equal APP_BASE_PATH + "/" (the Apache Alias in backend/config/apache-webforge.conf)
+    RewriteBase /webforge/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set Referrer-Policy "same-origin"
+    Header always set X-Frame-Options "DENY"
+</IfModule>
