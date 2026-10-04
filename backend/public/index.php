@@ -50,6 +50,13 @@ try {
         'auth'    => ($route['options']['auth'] ?? false) ? 'user #' . $app->session->userId() : 'public route',
     ]);
 
+    // PHP locks the session file for the whole request; release it as soon as possible so one
+    // slow request (e.g. a delayed AJAX demo) does not block the user's other requests.
+    // Only routes that change session data ('sessionWrite' => true) keep it open.
+    if (($route['options']['session'] ?? true) && !($route['options']['sessionWrite'] ?? false)) {
+        $app->session->release();
+    }
+
     $handler = $route['handler'];
     $response = is_array($handler)
         ? (new $handler[0]($app))->{$handler[1]}($request)

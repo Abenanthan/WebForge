@@ -5,7 +5,9 @@ import { defineConfig, devices } from '@playwright/test';
 // Requires XAMPP (Apache + MySQL) running and `npm run dev`.
 export default defineConfig({
   testDir: './e2e',
-  timeout: 30_000,
+  timeout: 45_000,
+  // Generous waits: the suite runs against real PHP + MySQL (bcrypt logins, real delays) on dev machines.
+  expect: { timeout: 10_000 },
   fullyParallel: false,
   workers: 1,
   reporter: [['list']],

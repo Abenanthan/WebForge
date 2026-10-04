@@ -29,4 +29,5 @@ docs/       design and setup documentation
 - [x] Phase 2: React shell, routing, auth (sessions, CSRF, throttling), dashboard
 - [x] Phase 3: Web Playground (CodeMirror 6, sandboxed live preview, console, problems, projects API)
 - [x] Phase 4: JS Playground (execution tracer), DOM Explorer, Event Visualizer, Form Validation Lab
-- [ ] Phase 5: AJAX Monitor, Canvas Studio
+- [x] Phase 5: AJAX Monitor (real requests, cancel, server trace), Canvas Studio (pointer events, undo/redo, save)
+- [ ] Phase 6: Server Lab, sessions, file handling, Database Lab

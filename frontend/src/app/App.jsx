@@ -17,6 +17,8 @@ const JsPlaygroundPage = lazy(() => import('../modules/js-playground/JsPlaygroun
 const DomExplorerPage = lazy(() => import('../modules/dom-explorer/DomExplorerPage.jsx'));
 const EventVisualizerPage = lazy(() => import('../modules/event-visualizer/EventVisualizerPage.jsx'));
 const FormLabPage = lazy(() => import('../modules/form-lab/FormLabPage.jsx'));
+const AjaxMonitorPage = lazy(() => import('../modules/ajax-monitor/AjaxMonitorPage.jsx'));
+const CanvasStudioPage = lazy(() => import('../modules/canvas-studio/CanvasStudioPage.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,8 @@ const router = createBrowserRouter([
           { path: 'lab/dom-explorer', element: <DomExplorerPage /> },
           { path: 'lab/event-visualizer', element: <EventVisualizerPage /> },
           { path: 'lab/form-lab', element: <FormLabPage /> },
+          { path: 'lab/ajax-monitor', element: <AjaxMonitorPage /> },
+          { path: 'lab/canvas-studio', element: <CanvasStudioPage /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

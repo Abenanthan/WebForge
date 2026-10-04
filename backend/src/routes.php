@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use WebForge\Controllers\AuthController;
+use WebForge\Controllers\DemoController;
 use WebForge\Controllers\ExperimentController;
 use WebForge\Controllers\FormLabController;
 use WebForge\Controllers\ProjectController;
@@ -14,7 +15,9 @@ use WebForge\Core\Router;
 /**
  * Route table. Handlers are closures (Request, App) or [Controller, method].
  * Options: 'auth' => true requires a logged-in session;
- *          'session' => false makes the route stateless (no session cookie).
+ *          'session' => false makes the route stateless (no session cookie);
+ *          'sessionWrite' => true keeps the session lock for the whole request (default: released
+ *          right after authentication, so slow requests never block a user's other requests).
  * CSRF is enforced globally for every non-GET request (see public/index.php).
  */
 return static function (Router $r): void {
@@ -40,11 +43,13 @@ return static function (Router $r): void {
     }, ['session' => false]);
 
     // --- Authentication ---------------------------------------------------
-    $r->get('/api/auth/csrf', [AuthController::class, 'csrf']);
-    $r->get('/api/auth/me', [AuthController::class, 'me']);
-    $r->post('/api/auth/register', [AuthController::class, 'register']);
-    $r->post('/api/auth/login', [AuthController::class, 'login']);
-    $r->post('/api/auth/logout', [AuthController::class, 'logout'], $auth);
+    // These routes change session data (CSRF token, login state), so they keep the session open.
+    $write = ['sessionWrite' => true];
+    $r->get('/api/auth/csrf', [AuthController::class, 'csrf'], $write);
+    $r->get('/api/auth/me', [AuthController::class, 'me'], $write);
+    $r->post('/api/auth/register', [AuthController::class, 'register'], $write);
+    $r->post('/api/auth/login', [AuthController::class, 'login'], $write);
+    $r->post('/api/auth/logout', [AuthController::class, 'logout'], $auth + $write);
 
     // --- Dashboard ----------------------------------------------------------
     $r->get('/api/stats/dashboard', [StatsController::class, 'dashboard'], $auth);
@@ -56,6 +61,13 @@ return static function (Router $r): void {
     $r->put('/api/projects/{id}', [ProjectController::class, 'update'], $auth);
     $r->patch('/api/projects/{id}', [ProjectController::class, 'rename'], $auth);
     $r->delete('/api/projects/{id}', [ProjectController::class, 'destroy'], $auth);
+
+    // --- AJAX Monitor demo endpoints ---------------------------------------
+    foreach (['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as $method) {
+        $r->add($method, '/api/demo/echo', [DemoController::class, 'echo'], $auth);
+    }
+    $r->get('/api/demo/concepts', [DemoController::class, 'concepts'], $auth);
+    $r->get('/api/demo/status/{code}', [DemoController::class, 'status'], $auth);
 
     // --- Labs -------------------------------------------------------------
     $r->post('/api/lab/forms/validate', [FormLabController::class, 'validate'], $auth);

@@ -83,6 +83,7 @@ export async function apiRequest(path, options = {}, isRetry = false) {
 
   let res;
   let json = null;
+  let size = 0;
   try {
     res = await fetch(url, {
       method,
@@ -92,6 +93,7 @@ export async function apiRequest(path, options = {}, isRetry = false) {
       signal: options.signal,
     });
     const text = await res.text();
+    size = new TextEncoder().encode(text).length;
     try {
       json = text ? JSON.parse(text) : null;
     } catch {
@@ -112,7 +114,9 @@ export async function apiRequest(path, options = {}, isRetry = false) {
   networkLog.finish(logId, {
     state: res.ok && json?.ok ? 'success' : 'error',
     status: res.status,
+    statusText: res.statusText,
     durationMs,
+    size,
     response: {
       headers: Object.fromEntries(res.headers.entries()),
       body: json,

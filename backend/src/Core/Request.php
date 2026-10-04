@@ -5,7 +5,7 @@ namespace WebForge\Core;
 
 final class Request
 {
-    private const MAX_BODY_BYTES = 1_048_576; // 1 MB
+    private const MAX_BODY_BYTES = 3_145_728; // 3 MB (canvas drawings are sent as PNG data URLs)
 
     /** @param array<string,string> $params route parameters, filled by the Router */
     private function __construct(
@@ -31,7 +31,7 @@ final class Request
             }
         }
         if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > self::MAX_BODY_BYTES) {
-            throw new HttpException(413, 'PAYLOAD_TOO_LARGE', 'Request body exceeds 1 MB.');
+            throw new HttpException(413, 'PAYLOAD_TOO_LARGE', 'Request body exceeds 3 MB.');
         }
         return new self(
             strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'),

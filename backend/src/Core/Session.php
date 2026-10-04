@@ -50,6 +50,14 @@ final class Session
         $_SESSION['lastSeen'] = $now;
     }
 
+    /** Write the session and release its lock; $_SESSION stays readable for this request. */
+    public function release(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+    }
+
     /** True when this request found (and cleared) an idle-expired login. */
     public function wasExpired(): bool
     {

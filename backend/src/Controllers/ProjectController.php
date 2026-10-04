@@ -14,7 +14,9 @@ use WebForge\Repositories\ProjectRepository;
 final class ProjectController
 {
     private const MAX_FILES = 10;
-    private const MAX_FILE_BYTES = 262_144; // 256 KB (canvas PNG data URLs are the largest)
+    private const MAX_FILE_BYTES = 262_144;   // 256 KB for source files
+    private const MAX_IMAGE_BYTES = 2_097_152; // 2 MB for PNG drawings (stored as data URLs)
+    private const PNG_DATA_URL = '/^data:image\/png;base64,[A-Za-z0-9+\/]+={0,2}$/';
     private const FILENAME_PATTERN = '/^[A-Za-z0-9_-]{1,40}\.(html|css|js|jsx|png)$/';
     private const LANGUAGE_BY_EXT = ['html' => 'html', 'css' => 'css', 'js' => 'javascript', 'jsx' => 'jsx', 'png' => 'png'];
 
@@ -140,8 +142,13 @@ final class ProjectController
                     $error = "Duplicate file name: $name.";
                     break;
                 }
-                if (!is_string($content) || strlen($content) > self::MAX_FILE_BYTES) {
-                    $error = "$name must be text of at most 256 KB.";
+                $isPng = str_ends_with(strtolower($name), '.png');
+                if (!is_string($content) || strlen($content) > ($isPng ? self::MAX_IMAGE_BYTES : self::MAX_FILE_BYTES)) {
+                    $error = $isPng ? "$name must be an image of at most 2 MB." : "$name must be text of at most 256 KB.";
+                    break;
+                }
+                if ($isPng && preg_match(self::PNG_DATA_URL, $content) !== 1) {
+                    $error = "$name must be a base64 PNG data URL.";
                     break;
                 }
                 $seen[strtolower($name)] = true;
@@ -152,7 +159,7 @@ final class ProjectController
 
         $this->app->tracer->note('validation', 'Validate project files', [
             'count' => is_array($files) ? count($files) : 0,
-            'rules' => ['max files' => self::MAX_FILES, 'max size' => '256 KB', 'name' => self::FILENAME_PATTERN],
+            'rules' => ['max files' => self::MAX_FILES, 'max size' => '256 KB (PNG: 2 MB)', 'name' => self::FILENAME_PATTERN],
             'passed' => $error === null,
         ], $t0, $error === null ? 'success' : 'error');
 

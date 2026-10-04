@@ -57,8 +57,11 @@ npm test                                   # unit/component tests (Vitest)
 $env:PLAYWRIGHT_BROWSERS_PATH = "D:\pw-browsers"
 npx playwright install chromium            # first time only
 npm run e2e                                # needs Apache + MySQL + `npm run dev` running
-# Against a dev server on another port:
-$env:WEBFORGE_BASE_URL = "http://localhost:5174"; npm run e2e
+
+# Recommended: test the production build (faster and closer to the demo)
+npm run build
+npm run preview                            # http://localhost:4173, same /api proxy
+$env:WEBFORGE_BASE_URL = "http://localhost:4173"; npm run e2e
 ```
 
 ## Existing databases
