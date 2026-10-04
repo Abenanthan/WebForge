@@ -6,26 +6,27 @@ namespace WebForge\Core;
 /**
  * Minimal method + path router. Patterns use {name} placeholders,
  * e.g. "/api/projects/{id}". A placeholder matches one path segment.
+ * A handler is either a closure (Request, App) or [ControllerClass, method].
  */
 final class Router
 {
-    /** @var list<array{method:string, regex:string, handler:callable, options:array}> */
+    /** @var list<array{method:string, regex:string, handler:callable|array, options:array}> */
     private array $routes = [];
 
     /** @param array{auth?:bool} $options */
-    public function add(string $method, string $pattern, callable $handler, array $options = []): void
+    public function add(string $method, string $pattern, callable|array $handler, array $options = []): void
     {
         $regex = '#^' . preg_replace('#\{([a-zA-Z_]+)\}#', '(?P<$1>[^/]+)', $pattern) . '$#';
         $this->routes[] = ['method' => $method, 'regex' => $regex, 'handler' => $handler, 'options' => $options];
     }
 
-    public function get(string $p, callable $h, array $o = []): void    { $this->add('GET', $p, $h, $o); }
-    public function post(string $p, callable $h, array $o = []): void   { $this->add('POST', $p, $h, $o); }
-    public function put(string $p, callable $h, array $o = []): void    { $this->add('PUT', $p, $h, $o); }
-    public function patch(string $p, callable $h, array $o = []): void  { $this->add('PATCH', $p, $h, $o); }
-    public function delete(string $p, callable $h, array $o = []): void { $this->add('DELETE', $p, $h, $o); }
+    public function get(string $p, callable|array $h, array $o = []): void    { $this->add('GET', $p, $h, $o); }
+    public function post(string $p, callable|array $h, array $o = []): void   { $this->add('POST', $p, $h, $o); }
+    public function put(string $p, callable|array $h, array $o = []): void    { $this->add('PUT', $p, $h, $o); }
+    public function patch(string $p, callable|array $h, array $o = []): void  { $this->add('PATCH', $p, $h, $o); }
+    public function delete(string $p, callable|array $h, array $o = []): void { $this->add('DELETE', $p, $h, $o); }
 
-    /** @return array{handler:callable, options:array} */
+    /** @return array{handler:callable|array, options:array} */
     public function match(Request $request): array
     {
         $pathMatched = false;

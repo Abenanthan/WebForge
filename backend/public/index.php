@@ -32,7 +32,28 @@ try {
     (require dirname(__DIR__) . '/src/routes.php')($router);
     $route = $router->match($request);
 
-    $response = ($route['handler'])($request, $app);
+    // Middleware: session -> CSRF (all mutating requests) -> authentication (protected routes)
+    // Stateless routes ('session' => false) never create a session cookie.
+    if ($route['options']['session'] ?? true) {
+        $app->session->start();
+    }
+    if (!$request->isSafeMethod() && !$app->session->verifyCsrf($request->header('X-CSRF-Token'))) {
+        throw new HttpException(403, 'CSRF_INVALID', 'Security token missing or expired. Refresh and try again.');
+    }
+    if (($route['options']['auth'] ?? false) && $app->session->userId() === null) {
+        throw new HttpException(401, $app->session->wasExpired() ? 'SESSION_EXPIRED' : 'UNAUTHENTICATED',
+            $app->session->wasExpired() ? 'Your session expired. Please log in again.' : 'Please log in to continue.');
+    }
+    $tracer->note('server', 'Middleware passed', [
+        'session' => ($route['options']['session'] ?? true) ? 'active' : 'not used (stateless route)',
+        'csrf'    => $request->isSafeMethod() ? 'not required (safe method)' : 'verified',
+        'auth'    => ($route['options']['auth'] ?? false) ? 'user #' . $app->session->userId() : 'public route',
+    ]);
+
+    $handler = $route['handler'];
+    $response = is_array($handler)
+        ? (new $handler[0]($app))->{$handler[1]}($request)
+        : $handler($request, $app);
 } catch (HttpException $e) {
     $tracer->note('server', 'Request rejected', ['code' => $e->errorCode], null, 'error');
     $response = Response::error($e->status, $e->errorCode, $e->getMessage(), $e->fields);

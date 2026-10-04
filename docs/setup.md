@@ -37,10 +37,29 @@ Open http://localhost/webforge/api/health. You should get:
 { "ok": true, "data": { "db": "connected", ... }, "meta": { "traceId": "...", "trace": [ ... ] } }
 ```
 
-## 5. Frontend (from Phase 2)
-The repository `.npmrc` sends the npm cache to `D:\npm-cache`.
+## 5. Frontend
+`frontend/.npmrc` sends the npm cache to `D:\npm-cache`. Run npm from inside `frontend/`, because npm only reads the `.npmrc` in the package folder.
 ```powershell
 cd frontend
 npm install
 npm run dev     # http://localhost:5173, proxies /api -> http://localhost/webforge/api
 ```
+Open http://localhost:5173 and log in with **demo@webforge.local / Demo@1234**, or register a new account.
+
+## 6. Tests
+```powershell
+cd frontend
+npm test                                   # unit/component tests (Vitest)
+
+# End-to-end (Playwright). Browsers live on D:, so set this once per terminal:
+$env:PLAYWRIGHT_BROWSERS_PATH = "D:\pw-browsers"
+npx playwright install chromium            # first time only
+npm run e2e                                # needs Apache + MySQL + `npm run dev` running
+```
+
+## Existing databases
+`login_attempts` was added in Phase 2. If your database was created before that, add the table without losing data:
+```powershell
+D:\xampp\mysql\bin\mysql.exe -uroot webforge -e "CREATE TABLE IF NOT EXISTS login_attempts (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, ip_address VARCHAR(45) NOT NULL, email VARCHAR(190) NOT NULL, attempted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, KEY idx_attempts_ip_time (ip_address, attempted_at), KEY idx_attempts_email_time (email, attempted_at)) ENGINE=InnoDB;"
+```
+(`php backend\bin\setup.php` also creates it, but it **drops and recreates** the whole database.)

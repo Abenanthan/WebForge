@@ -42,6 +42,17 @@ final class Request
         );
     }
 
+    /** Client IP as seen by this server (no proxy headers trusted). */
+    public function ip(): string
+    {
+        return (string) ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+    }
+
+    public function isSafeMethod(): bool
+    {
+        return in_array($this->method, ['GET', 'HEAD', 'OPTIONS'], true);
+    }
+
     public function header(string $name): ?string
     {
         return $this->headers[strtolower($name)] ?? null;

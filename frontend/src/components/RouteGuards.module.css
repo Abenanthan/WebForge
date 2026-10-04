@@ -1,0 +1,6 @@
+.fullPage {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--space-5);
+}

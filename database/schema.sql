@@ -22,6 +22,16 @@ CREATE TABLE users (
     UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB;
 
+-- Failed-login log used for brute-force throttling (per IP and per email).
+CREATE TABLE IF NOT EXISTS login_attempts (
+    id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    ip_address      VARCHAR(45)  NOT NULL,
+    email           VARCHAR(190) NOT NULL,
+    attempted_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_attempts_ip_time (ip_address, attempted_at),
+    KEY idx_attempts_email_time (email, attempted_at)
+) ENGINE=InnoDB;
+
 -- ---------------------------------------------------------------------
 -- Learning catalogue
 -- ---------------------------------------------------------------------

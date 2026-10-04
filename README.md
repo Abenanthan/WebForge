@@ -18,7 +18,7 @@ WebForge is a browser-based laboratory. Users write, run, inspect and trace mode
 
 ## Repository layout
 ```
-frontend/   React SPA (Phase 2+)
+frontend/   React SPA (Vite): src/ app, layouts, pages, components, services; e2e/ Playwright
 backend/    PHP API: public/ is the only web-exposed folder
 database/   schema.sql, seed.sql
 docs/       design and setup documentation
@@ -26,4 +26,5 @@ docs/       design and setup documentation
 
 ## Status
 - [x] Phase 1: architecture, schema, seed data, API core (`/api/health`)
-- [ ] Phase 2: React shell, routing, auth, dashboard
+- [x] Phase 2: React shell, routing, auth (sessions, CSRF, throttling), dashboard
+- [ ] Phase 3: Web Playground

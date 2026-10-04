@@ -1,0 +1,128 @@
+/*
+ * WebForge design tokens.
+ * Layer colours (--layer-*) are a shared visual language: the same colour marks
+ * the same layer (network, server, database, state...) in every visualizer.
+ */
+:root {
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --sidebar-width: 248px;
+  --sidebar-collapsed: 64px;
+  --topbar-height: 56px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+}
+
+/* ---------- Dark (default) ---------- */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0a0e16;
+  --bg-elevated: #0e1420;
+  --surface: #121a28;
+  --surface-2: #182234;
+  --surface-hover: #1d2940;
+  --border: #233049;
+  --border-strong: #31405e;
+
+  --text: #e6eaf2;
+  --text-muted: #9aa5bd;
+  --text-faint: #6b7792;
+
+  --accent: #7c8cff;
+  --accent-strong: #9aa6ff;
+  --accent-contrast: #0a0e16;
+  --accent-soft: rgba(124, 140, 255, 0.14);
+  --accent-2: #22d3ee;
+  --gradient: linear-gradient(135deg, #7c8cff 0%, #22d3ee 100%);
+  --gradient-soft: linear-gradient(135deg, rgba(124, 140, 255, 0.16), rgba(34, 211, 238, 0.08));
+
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.14);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.14);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.14);
+
+  --layer-ui: #e2e8f0;
+  --layer-dom: #f472b6;
+  --layer-event: #f59e0b;
+  --layer-validation: #fb923c;
+  --layer-network: #60a5fa;
+  --layer-server: #a78bfa;
+  --layer-database: #fbbf24;
+  --layer-state: #34d399;
+  --layer-render: #22d3ee;
+  --layer-router: #c084fc;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+
+/* ---------- Light ---------- */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f5f7fb;
+  --bg-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f4f9;
+  --surface-hover: #e9eef6;
+  --border: #e1e6ef;
+  --border-strong: #c9d1df;
+
+  --text: #0f172a;
+  --text-muted: #4b5568;
+  --text-faint: #6b7487;
+
+  --accent: #4f5bd5;
+  --accent-strong: #3d48bf;
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(79, 91, 213, 0.1);
+  --accent-2: #0891b2;
+  --gradient: linear-gradient(135deg, #4f5bd5 0%, #0891b2 100%);
+  --gradient-soft: linear-gradient(135deg, rgba(79, 91, 213, 0.08), rgba(8, 145, 178, 0.05));
+
+  --success: #059669;
+  --success-soft: rgba(5, 150, 105, 0.1);
+  --warning: #b45309;
+  --warning-soft: rgba(180, 83, 9, 0.1);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.08);
+
+  --layer-ui: #334155;
+  --layer-dom: #db2777;
+  --layer-event: #d97706;
+  --layer-validation: #ea580c;
+  --layer-network: #2563eb;
+  --layer-server: #7c3aed;
+  --layer-database: #b45309;
+  --layer-state: #059669;
+  --layer-render: #0891b2;
+  --layer-router: #9333ea;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
