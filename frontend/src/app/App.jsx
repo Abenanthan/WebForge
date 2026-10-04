@@ -13,6 +13,10 @@ const LoginPage = lazy(() => import('../pages/auth/LoginPage.jsx'));
 const RegisterPage = lazy(() => import('../pages/auth/RegisterPage.jsx'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage.jsx'));
 const WebPlaygroundPage = lazy(() => import('../modules/web-playground/WebPlaygroundPage.jsx'));
+const JsPlaygroundPage = lazy(() => import('../modules/js-playground/JsPlaygroundPage.jsx'));
+const DomExplorerPage = lazy(() => import('../modules/dom-explorer/DomExplorerPage.jsx'));
+const EventVisualizerPage = lazy(() => import('../modules/event-visualizer/EventVisualizerPage.jsx'));
+const FormLabPage = lazy(() => import('../modules/form-lab/FormLabPage.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -36,6 +40,10 @@ const router = createBrowserRouter([
           { index: true, element: <DashboardPage /> },
           // Module routes are added here as each phase lands (see app/modules.js).
           { path: 'lab/web-playground', element: <WebPlaygroundPage /> },
+          { path: 'lab/js-playground', element: <JsPlaygroundPage /> },
+          { path: 'lab/dom-explorer', element: <DomExplorerPage /> },
+          { path: 'lab/event-visualizer', element: <EventVisualizerPage /> },
+          { path: 'lab/form-lab', element: <FormLabPage /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

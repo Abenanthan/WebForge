@@ -28,4 +28,5 @@ docs/       design and setup documentation
 - [x] Phase 1: architecture, schema, seed data, API core (`/api/health`)
 - [x] Phase 2: React shell, routing, auth (sessions, CSRF, throttling), dashboard
 - [x] Phase 3: Web Playground (CodeMirror 6, sandboxed live preview, console, problems, projects API)
-- [ ] Phase 4: JS Playground, DOM Explorer, Event Visualizer, Form Lab
+- [x] Phase 4: JS Playground (execution tracer), DOM Explorer, Event Visualizer, Form Validation Lab
+- [ ] Phase 5: AJAX Monitor, Canvas Studio

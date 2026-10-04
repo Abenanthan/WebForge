@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use WebForge\Controllers\AuthController;
 use WebForge\Controllers\ExperimentController;
+use WebForge\Controllers\FormLabController;
 use WebForge\Controllers\ProjectController;
 use WebForge\Controllers\StatsController;
 use WebForge\Core\App;
@@ -55,6 +56,9 @@ return static function (Router $r): void {
     $r->put('/api/projects/{id}', [ProjectController::class, 'update'], $auth);
     $r->patch('/api/projects/{id}', [ProjectController::class, 'rename'], $auth);
     $r->delete('/api/projects/{id}', [ProjectController::class, 'destroy'], $auth);
+
+    // --- Labs -------------------------------------------------------------
+    $r->post('/api/lab/forms/validate', [FormLabController::class, 'validate'], $auth);
 
     // --- Experiments (activity tracking) -----------------------------------
     $r->post('/api/experiments/{slug}/runs', [ExperimentController::class, 'recordRun'], $auth);

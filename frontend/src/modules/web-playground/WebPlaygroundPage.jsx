@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useBlocker, useSearchParams } from 'react-router-dom';
-import { Code, Eye, Play, RotateCcw, Save, SquareTerminal, TriangleAlert } from 'lucide-react';
+import { useBlocker, useNavigate, useSearchParams } from 'react-router-dom';
+import { Code, Eye, Network, Play, RotateCcw, Save, SquareTerminal, TriangleAlert } from 'lucide-react';
 import { CodeEditor } from '../../editor/CodeEditor.jsx';
 import { buildDocument } from '../../sandbox/buildDocument.js';
 import { Button } from '../../components/ui/Button.jsx';
@@ -79,6 +79,7 @@ function SaveDialog({ open, initialTitle, saving, error, onSubmit, onClose }) {
 
 export default function WebPlaygroundPage() {
   const toast = useToast();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const projectParam = searchParams.get('project');
   const { state, dirty, modifiedFiles, actions, clearDraft } = usePlaygroundState();
@@ -416,6 +417,14 @@ export default function WebPlaygroundPage() {
           </Button>
           <Button icon={Save} onClick={requestSave} loading={saveDialog.saving && !saveDialog.open} disabled={Boolean(state.project) && !dirty} title="Save (Ctrl+S)">
             Save
+          </Button>
+          <Button
+            variant="ghost"
+            icon={Network}
+            onClick={() => navigate('/lab/dom-explorer', { state: { files: filesRef.current, title: state.title } })}
+            title="Open this page in the DOM Explorer"
+          >
+            Inspect DOM
           </Button>
           <Button variant="primary" icon={Play} onClick={runManually} title="Run (Ctrl+Enter)">Run</Button>
         </div>

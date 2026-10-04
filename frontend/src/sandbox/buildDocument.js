@@ -1,7 +1,10 @@
 import { BRIDGE_SOURCE } from './bridgeRuntime.js';
+import { INSPECTOR_SOURCE } from './inspectorRuntime.js';
+import { TRACE_OBJECT } from './traceInstrument.js';
 import { instrumentScript, LOOP_GUARD_FN } from './instrument.js';
 
 export const LOOP_LIMIT_MS = 1500;
+export const MAX_TRACE_EVENTS = 400;
 
 /**
  * Content-Security-Policy of every preview document. The iframe is also sandboxed
@@ -37,9 +40,14 @@ const escapeAttr = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
  * browser would load index.html with its linked style.css and script.js.
  *
  * @param {Record<string,string>} files  filename → content (must include index.html)
+ * @param {object} options
+ *   runId, parentOrigin  identify this run's messages
+ *   instrument           (source) => { ok, code } | { ok:false, error }  (default: loop guards only)
+ *   trace                install execution-trace hooks (JS Playground)
+ *   inspector            install the DOM inspector runtime (DOM Explorer)
  * @returns {{ srcdoc: string, diagnostics: Array<{severity:'error'|'warning'|'info', kind:string, file:string, line?:number, col?:number, message:string}>, stats: object }}
  */
-export function buildDocument(files, { runId, parentOrigin }) {
+export function buildDocument(files, { runId, parentOrigin, instrument = instrumentScript, trace = false, inspector = false }) {
   const diagnostics = [];
   const linked = new Set();
   let html = files['index.html'] ?? '';
@@ -71,7 +79,7 @@ export function buildDocument(files, { runId, parentOrigin }) {
       return `<!-- missing script: ${escapeAttr(src)} -->`;
     }
     linked.add(name);
-    const result = instrumentScript(files[name]);
+    const result = instrument(files[name]);
     if (!result.ok) {
       diagnostics.push({ severity: 'error', kind: 'syntax', file: name, line: result.error.line, col: result.error.col, message: result.error.message });
       return `<!-- ${escapeAttr(name)} not executed: syntax error -->`;
@@ -93,9 +101,11 @@ export function buildDocument(files, { runId, parentOrigin }) {
     diagnostics.push({ severity: 'info', kind: 'doctype', file: 'index.html', line: 1, message: 'index.html has no <!DOCTYPE html>, so the browser renders it in quirks mode.' });
   }
 
+  const args = (...values) => values.map((v) => JSON.stringify(v)).join(', ');
   const head = [
-    `<meta http-equiv="Content-Security-Policy" content="${SANDBOX_CSP}">`,
-    `<script>(${BRIDGE_SOURCE})(${JSON.stringify(runId)}, ${JSON.stringify(parentOrigin)}, ${JSON.stringify(LOOP_GUARD_FN)}, ${LOOP_LIMIT_MS});</script>`,
+    `<meta data-webforge-internal http-equiv="Content-Security-Policy" content="${SANDBOX_CSP}">`,
+    `<script data-webforge-internal>(${BRIDGE_SOURCE})(${args(runId, parentOrigin, LOOP_GUARD_FN, LOOP_LIMIT_MS, trace ? TRACE_OBJECT : null, MAX_TRACE_EVENTS)});</script>`,
+    inspector ? `<script data-webforge-internal>(${INSPECTOR_SOURCE})(${args(runId, parentOrigin)});</script>` : '',
   ].join('');
 
   // The policy and bridge must come before any user markup.

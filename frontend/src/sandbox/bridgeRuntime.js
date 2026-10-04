@@ -9,7 +9,7 @@
  * Kept as a plain ES5 function: it is stringified into the document, never bundled.
  */
 // eslint-disable-next-line no-unused-vars
-function webforgeBridge(RUN_ID, PARENT_ORIGIN, LOOP_GUARD_FN, LOOP_LIMIT_MS) {
+function webforgeBridge(RUN_ID, PARENT_ORIGIN, LOOP_GUARD_FN, LOOP_LIMIT_MS, TRACE_OBJECT, MAX_TRACE_EVENTS) {
   var parentWindow = window.parent;
   var nativeConsole = {};
 
@@ -149,6 +149,47 @@ function webforgeBridge(RUN_ID, PARENT_ORIGIN, LOOP_GUARD_FN, LOOP_LIMIT_MS) {
       throw new RangeError('Potential infinite loop: a loop ran for more than ' + LOOP_LIMIT_MS / 1000 + ' s and was stopped by WebForge.');
     }
   };
+
+  // ---------- execution trace hooks (JS Playground; see traceInstrument.js) ----------
+  if (TRACE_OBJECT) {
+    var traceCount = 0;
+    var traceStart = performance.now();
+    var emit = function (event) {
+      traceCount++;
+      if (traceCount > MAX_TRACE_EVENTS) {
+        if (traceCount === MAX_TRACE_EVENTS + 1) post('trace-truncated', { limit: MAX_TRACE_EVENTS });
+        return;
+      }
+      event.seq = traceCount;
+      event.t = Math.round((performance.now() - traceStart) * 1000) / 1000;
+      post('trace', event);
+    };
+    window[TRACE_OBJECT] = {
+      v: function (line, names, values) {
+        var vars = [];
+        for (var i = 0; i < names.length; i++) vars.push([names[i], serialize(values[i], 0, [])]);
+        emit({ kind: 'var', line: line, vars: vars });
+      },
+      c: function (line, source, value) {
+        emit({ kind: 'cond', line: line, source: source, result: Boolean(value), value: serialize(value, 0, []) });
+        return value;
+      },
+      f: function (line, name, params, values) {
+        var args = [];
+        for (var i = 0; i < params.length; i++) args.push([params[i], serialize(values[i], 0, [])]);
+        emit({ kind: 'call', line: line, name: name, args: args });
+      },
+      r: function (line, name, value) {
+        emit({ kind: 'return', line: line, name: name, value: serialize(value, 0, []) });
+        return value;
+      },
+    };
+    var tracedConsoleLog = console.log;
+    console.log = function () {
+      emit({ kind: 'log', args: serializeArgs(arguments) });
+      tracedConsoleLog.apply(console, arguments);
+    };
+  }
 
   // ---------- sandbox notices ----------
   document.addEventListener('securitypolicyviolation', function (event) {

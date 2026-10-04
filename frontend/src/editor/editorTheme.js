@@ -48,6 +48,10 @@ const chrome = EditorView.theme({
     textUnderlineOffset: '3px',
   },
   '.cm-errorLine': { backgroundColor: 'var(--danger-soft)' },
+  '.cm-traceLine': {
+    backgroundColor: 'color-mix(in srgb, var(--layer-state) 18%, transparent)',
+    boxShadow: 'inset 3px 0 0 var(--layer-state)',
+  },
 });
 
 const highlight = HighlightStyle.define([

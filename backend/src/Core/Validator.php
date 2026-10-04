@@ -60,6 +60,34 @@ final class Validator
         return $clean;
     }
 
+    /**
+     * Evaluate every applicable rule (not just the first failure) and report each outcome.
+     * Used by the Form Validation Lab to show rule-by-rule results.
+     *
+     * @return array<string, list<array{rule:string, passed:bool, message:?string}>>
+     */
+    public static function report(array $input, array $rules): array
+    {
+        $report = [];
+        foreach ($rules as $field => $fieldRules) {
+            $raw = $input[$field] ?? null;
+            $value = is_string($raw) ? trim($raw) : $raw;
+            $label = ucfirst(str_replace('_', ' ', $field));
+            $present = $value !== null && $value !== '';
+            $report[$field] = [];
+            foreach ($fieldRules as $rule) {
+                [$name, $arg] = array_pad(explode(':', $rule, 2), 2, null);
+                if ($name !== 'required' && !$present) {
+                    $report[$field][] = ['rule' => $rule, 'passed' => true, 'message' => null, 'skipped' => true];
+                    continue;
+                }
+                $error = self::apply($name, $arg, $value, $label, $present);
+                $report[$field][] = ['rule' => $rule, 'passed' => $error === null, 'message' => $error];
+            }
+        }
+        return $report;
+    }
+
     private static function apply(string $name, ?string $arg, mixed $value, string $label, bool $present): ?string
     {
         if ($name !== 'required' && !is_scalar($value)) {

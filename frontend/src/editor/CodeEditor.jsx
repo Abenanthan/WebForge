@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { basicSetup } from 'codemirror';
-import { EditorState, Prec } from '@codemirror/state';
-import { EditorView, keymap } from '@codemirror/view';
+import { EditorState, Prec, StateEffect, StateField } from '@codemirror/state';
+import { Decoration, EditorView, keymap } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
@@ -9,6 +9,25 @@ import { javascript } from '@codemirror/lang-javascript';
 import { setDiagnostics } from '@codemirror/lint';
 import { webforgeEditorTheme } from './editorTheme.js';
 import styles from './CodeEditor.module.css';
+
+// Highlighted line (e.g. the line being executed while stepping through a trace).
+const setHighlight = StateEffect.define();
+const highlightField = StateField.define({
+  create: () => Decoration.none,
+  update(deco, tr) {
+    let next = deco.map(tr.changes);
+    for (const effect of tr.effects) {
+      if (effect.is(setHighlight)) {
+        const line = effect.value;
+        next = line && line <= tr.state.doc.lines
+          ? Decoration.set([Decoration.line({ class: 'cm-traceLine' }).range(tr.state.doc.line(line).from)])
+          : Decoration.none;
+      }
+    }
+    return next;
+  },
+  provide: (field) => EditorView.decorations.from(field),
+});
 
 const LANGUAGES = {
   html: () => html(),
@@ -24,9 +43,10 @@ const LANGUAGES = {
  *
  * Imperative handle: focus(), goTo(line, col)
  * diagnostics: [{ line, col?, message }]  (1-based, rendered as squiggles + gutter)
+ * highlightLine: 1-based line to mark (scrolled into view), or null
  */
 export const CodeEditor = forwardRef(function CodeEditor(
-  { docId, value, language, onChange, onRun, onSave, diagnostics = [], ariaLabel, readOnly = false },
+  { docId, value, language, onChange, onRun, onSave, diagnostics = [], highlightLine = null, ariaLabel, readOnly = false },
   ref,
 ) {
   const hostRef = useRef(null);
@@ -48,6 +68,7 @@ export const CodeEditor = forwardRef(function CodeEditor(
         ])),
         (LANGUAGES[language] ?? LANGUAGES.javascript)(),
         webforgeEditorTheme,
+        highlightField,
         EditorState.readOnly.of(readOnly),
         EditorView.contentAttributes.of({ 'aria-label': ariaLabel ?? `${docId} editor` }),
         EditorView.updateListener.of((update) => {
@@ -102,6 +123,18 @@ export const CodeEditor = forwardRef(function CodeEditor(
       });
     view.dispatch(setDiagnostics(view.state, mapped));
   }, [diagnostics, docId, value]);
+
+  useEffect(() => {
+    const view = viewRef.current;
+    if (!view) return;
+    const valid = highlightLine && highlightLine <= view.state.doc.lines;
+    view.dispatch({
+      effects: [
+        setHighlight.of(valid ? highlightLine : null),
+        ...(valid ? [EditorView.scrollIntoView(view.state.doc.line(highlightLine).from, { y: 'nearest' })] : []),
+      ],
+    });
+  }, [highlightLine, docId, value]);
 
   useImperativeHandle(ref, () => ({
     focus: () => viewRef.current?.focus(),
