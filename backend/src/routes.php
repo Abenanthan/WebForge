@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 use WebForge\Controllers\AuthController;
+use WebForge\Controllers\ExperimentController;
+use WebForge\Controllers\ProjectController;
 use WebForge\Controllers\StatsController;
 use WebForge\Core\App;
 use WebForge\Core\Request;
@@ -45,4 +47,15 @@ return static function (Router $r): void {
 
     // --- Dashboard ----------------------------------------------------------
     $r->get('/api/stats/dashboard', [StatsController::class, 'dashboard'], $auth);
+
+    // --- Projects -----------------------------------------------------------
+    $r->get('/api/projects', [ProjectController::class, 'index'], $auth);
+    $r->post('/api/projects', [ProjectController::class, 'store'], $auth);
+    $r->get('/api/projects/{id}', [ProjectController::class, 'show'], $auth);
+    $r->put('/api/projects/{id}', [ProjectController::class, 'update'], $auth);
+    $r->patch('/api/projects/{id}', [ProjectController::class, 'rename'], $auth);
+    $r->delete('/api/projects/{id}', [ProjectController::class, 'destroy'], $auth);
+
+    // --- Experiments (activity tracking) -----------------------------------
+    $r->post('/api/experiments/{slug}/runs', [ExperimentController::class, 'recordRun'], $auth);
 };

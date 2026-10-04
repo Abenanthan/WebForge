@@ -34,14 +34,16 @@ test('wrong password shows the server error', async ({ page }) => {
 
 test('demo login shows a dashboard built from real API data, then logs out', async ({ page }) => {
   await loginAsDemo(page);
-  await expect(page.getByText('0 / 36')).toBeVisible();
+  // Totals come from the API; the demo account may already have activity from other tests.
+  await expect(page.getByText(/^\d+ \/ 36$/)).toBeVisible();
   await expect(page.getByText('API online')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Concept progress' })).toBeVisible();
-  await expect(page.getByText('No activity yet')).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Recent activity' })).toBeVisible();
   await shot(page, '02-dashboard');
 
-  // Planned modules are visible but are not links.
-  await expect(page.getByRole('link', { name: /Web Playground/ })).toHaveCount(0);
+  // Live modules are links; planned modules are listed but are not links.
+  await expect(page.getByRole('link', { name: /Web Playground/ }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: /DOM Explorer/ })).toHaveCount(0);
 
   // Theme toggle flips the theme and the choice survives a reload.
   const html = page.locator('html');

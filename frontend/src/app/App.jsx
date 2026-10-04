@@ -12,6 +12,7 @@ const DashboardPage = lazy(() => import('../pages/dashboard/DashboardPage.jsx'))
 const LoginPage = lazy(() => import('../pages/auth/LoginPage.jsx'));
 const RegisterPage = lazy(() => import('../pages/auth/RegisterPage.jsx'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage.jsx'));
+const WebPlaygroundPage = lazy(() => import('../modules/web-playground/WebPlaygroundPage.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <DashboardPage /> },
           // Module routes are added here as each phase lands (see app/modules.js).
+          { path: 'lab/web-playground', element: <WebPlaygroundPage /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

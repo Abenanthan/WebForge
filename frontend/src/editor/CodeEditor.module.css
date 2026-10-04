@@ -1,0 +1,15 @@
+.host {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--editor-bg);
+}
+
+.host :global(.cm-editor) {
+  height: 100%;
+}
+
+/* The caret and active-line highlight show editor focus; skip the global focus ring. */
+.host :global(.cm-content:focus-visible) {
+  box-shadow: none;
+}

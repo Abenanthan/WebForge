@@ -38,7 +38,7 @@ export const MODULE_GROUPS = [
     id: 'client',
     label: 'Client-side Labs',
     modules: [
-      { id: 'web-playground', title: 'Web Playground', path: '/lab/web-playground', icon: Code, layer: 'render', status: 'planned', phase: 3,
+      { id: 'web-playground', title: 'Web Playground', path: '/lab/web-playground', icon: Code, layer: 'render', status: 'ready',
         description: 'HTML, CSS & JS editor with live preview and console.' },
       { id: 'js-playground', title: 'JS Playground', path: '/lab/js-playground', icon: Braces, layer: 'state', status: 'planned', phase: 4,
         description: 'Run JavaScript and watch input → execution → output.' },

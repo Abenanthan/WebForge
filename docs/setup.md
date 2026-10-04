@@ -46,6 +46,8 @@ npm run dev     # http://localhost:5173, proxies /api -> http://localhost/webfor
 ```
 Open http://localhost:5173 and log in with **demo@webforge.local / Demo@1234**, or register a new account.
 
+> **Blank page after pulling or installing packages?** If the browser console shows `504 (Outdated Optimize Dep)`, the running dev server has a stale dependency cache. Stop it (Ctrl+C) and start it again with `npm run dev -- --force`.
+
 ## 6. Tests
 ```powershell
 cd frontend
@@ -55,6 +57,8 @@ npm test                                   # unit/component tests (Vitest)
 $env:PLAYWRIGHT_BROWSERS_PATH = "D:\pw-browsers"
 npx playwright install chromium            # first time only
 npm run e2e                                # needs Apache + MySQL + `npm run dev` running
+# Against a dev server on another port:
+$env:WEBFORGE_BASE_URL = "http://localhost:5174"; npm run e2e
 ```
 
 ## Existing databases
