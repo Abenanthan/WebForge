@@ -70,9 +70,9 @@ export const MODULE_GROUPS = [
     modules: [
       { id: 'component-studio', title: 'Component Studio', path: '/lab/component-studio', icon: Component, layer: 'render', status: 'ready',
         description: 'Component trees, JSX and props flowing between them.' },
-      { id: 'state-lab', title: 'State & Hooks', path: '/lab/state-lab', icon: Activity, layer: 'state', status: 'planned', phase: 8,
+      { id: 'state-lab', title: 'State & Hooks', path: '/lab/state-lab', icon: Activity, layer: 'state', status: 'ready',
         description: 'useState, useEffect and every re-render they cause.' },
-      { id: 'routing-visualizer', title: 'Routing Visualizer', path: '/lab/routing-visualizer', icon: Route, layer: 'router', status: 'planned', phase: 8,
+      { id: 'routing-visualizer', title: 'Routing Visualizer', path: '/lab/routing-visualizer', icon: Route, layer: 'router', status: 'ready',
         description: 'Watch the router match paths and render components.' },
     ],
   },

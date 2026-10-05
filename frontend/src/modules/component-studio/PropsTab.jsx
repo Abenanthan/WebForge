@@ -84,7 +84,8 @@ export default function PropsTab() {
   function record(keys, message, callback) {
     logSeq += 1;
     setChange({ keys, callback, seq: logSeq });
-    setLog((l) => [{ id: logSeq, message, time: new Date().toLocaleTimeString([], { hour12: false }) }, ...l].slice(0, 12));
+    const entry = { id: logSeq, message, time: new Date().toLocaleTimeString([], { hour12: false }) };
+    setLog((l) => [entry, ...l].slice(0, 12));
     if (!logged.current) {
       logged.current = true;
       recordExperimentRun('props-flow', 'success');

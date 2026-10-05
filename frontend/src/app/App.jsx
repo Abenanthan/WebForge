@@ -29,6 +29,10 @@ const ComponentStudioLayout = lazy(() => import('../modules/component-studio/Com
 const ComponentTreeTab = lazy(() => import('../modules/component-studio/TreeTab.jsx'));
 const JsxTab = lazy(() => import('../modules/component-studio/JsxTab.jsx'));
 const PropsTab = lazy(() => import('../modules/component-studio/PropsTab.jsx'));
+const StateLabLayout = lazy(() => import('../modules/state-lab/StateLabLayout.jsx'));
+const StateTab = lazy(() => import('../modules/state-lab/StateTab.jsx'));
+const HooksTab = lazy(() => import('../modules/state-lab/HooksTab.jsx'));
+const RoutingVisualizerPage = lazy(() => import('../modules/routing/RoutingVisualizerPage.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -78,6 +82,15 @@ const router = createBrowserRouter([
               { path: 'props', element: <PropsTab /> },
             ],
           },
+          {
+            path: 'lab/state-lab',
+            element: <StateLabLayout />,
+            children: [
+              { index: true, element: <StateTab /> },
+              { path: 'hooks', element: <HooksTab /> },
+            ],
+          },
+          { path: 'lab/routing-visualizer', element: <RoutingVisualizerPage /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },
