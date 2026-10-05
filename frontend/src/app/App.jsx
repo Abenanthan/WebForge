@@ -25,6 +25,10 @@ const ServerFormTab = lazy(() => import('../modules/server-lab/FormTab.jsx'));
 const ServerSessionsTab = lazy(() => import('../modules/server-lab/SessionsTab.jsx'));
 const ServerFilesTab = lazy(() => import('../modules/server-lab/FilesTab.jsx'));
 const DatabaseLabPage = lazy(() => import('../modules/database-lab/DatabaseLabPage.jsx'));
+const ComponentStudioLayout = lazy(() => import('../modules/component-studio/ComponentStudioLayout.jsx'));
+const ComponentTreeTab = lazy(() => import('../modules/component-studio/TreeTab.jsx'));
+const JsxTab = lazy(() => import('../modules/component-studio/JsxTab.jsx'));
+const PropsTab = lazy(() => import('../modules/component-studio/PropsTab.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -65,6 +69,15 @@ const router = createBrowserRouter([
             ],
           },
           { path: 'lab/database-lab', element: <DatabaseLabPage /> },
+          {
+            path: 'lab/component-studio',
+            element: <ComponentStudioLayout />,
+            children: [
+              { index: true, element: <ComponentTreeTab /> },
+              { path: 'jsx', element: <JsxTab /> },
+              { path: 'props', element: <PropsTab /> },
+            ],
+          },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

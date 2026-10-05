@@ -68,7 +68,7 @@ export const MODULE_GROUPS = [
     id: 'react',
     label: 'React Labs',
     modules: [
-      { id: 'component-studio', title: 'Component Studio', path: '/lab/component-studio', icon: Component, layer: 'render', status: 'planned', phase: 7,
+      { id: 'component-studio', title: 'Component Studio', path: '/lab/component-studio', icon: Component, layer: 'render', status: 'ready',
         description: 'Component trees, JSX and props flowing between them.' },
       { id: 'state-lab', title: 'State & Hooks', path: '/lab/state-lab', icon: Activity, layer: 'state', status: 'planned', phase: 8,
         description: 'useState, useEffect and every re-render they cause.' },

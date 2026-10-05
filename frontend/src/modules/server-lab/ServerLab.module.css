@@ -4,37 +4,6 @@
   gap: var(--space-4);
 }
 
-/* ---------- Section tabs ---------- */
-.sections {
-  display: flex;
-  gap: var(--space-1);
-  overflow-x: auto;
-  border-bottom: 1px solid var(--border);
-}
-
-.section {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  padding: var(--space-2) var(--space-3);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  color: var(--text-muted);
-  font-size: var(--text-sm);
-  font-weight: 500;
-}
-
-.section:hover {
-  color: var(--text);
-  text-decoration: none;
-}
-
-.sectionActive {
-  color: var(--text);
-  border-bottom-color: var(--layer-server);
-}
-
 /* ---------- Layouts ---------- */
 .experimentsGrid {
   display: grid;
