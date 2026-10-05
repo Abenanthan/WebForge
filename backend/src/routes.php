@@ -2,10 +2,14 @@
 declare(strict_types=1);
 
 use WebForge\Controllers\AuthController;
+use WebForge\Controllers\DbLabController;
 use WebForge\Controllers\DemoController;
+use WebForge\Controllers\FileLabController;
 use WebForge\Controllers\ExperimentController;
 use WebForge\Controllers\FormLabController;
 use WebForge\Controllers\ProjectController;
+use WebForge\Controllers\ServerLabController;
+use WebForge\Controllers\SessionLabController;
 use WebForge\Controllers\StatsController;
 use WebForge\Core\App;
 use WebForge\Core\Request;
@@ -71,6 +75,33 @@ return static function (Router $r): void {
 
     // --- Labs -------------------------------------------------------------
     $r->post('/api/lab/forms/validate', [FormLabController::class, 'validate'], $auth);
+
+    // Server Lab (fixed PHP experiments only, never user code)
+    $r->get('/api/lab/server/experiments', [ServerLabController::class, 'experiments'], $auth);
+    $r->post('/api/lab/server/run/{slug}', [ServerLabController::class, 'run'], $auth);
+    $r->post('/api/lab/server/form', [ServerLabController::class, 'processForm'], $auth);
+
+    // Session Demonstrator (separate WEBFORGE_LAB_SID session)
+    $r->get('/api/lab/session/state', [SessionLabController::class, 'state'], $auth);
+    $r->post('/api/lab/session/login', [SessionLabController::class, 'login'], $auth);
+    $r->get('/api/lab/session/protected', [SessionLabController::class, 'protectedPage'], $auth);
+    $r->post('/api/lab/session/data', [SessionLabController::class, 'setData'], $auth);
+    $r->post('/api/lab/session/logout', [SessionLabController::class, 'logout'], $auth);
+
+    // File Handling Lab (per-user sandbox directory)
+    $r->get('/api/lab/files', [FileLabController::class, 'index'], $auth);
+    $r->post('/api/lab/files', [FileLabController::class, 'create'], $auth);
+    $r->get('/api/lab/files/{name}', [FileLabController::class, 'read'], $auth);
+    $r->put('/api/lab/files/{name}', [FileLabController::class, 'write'], $auth);
+    $r->post('/api/lab/files/{name}/append', [FileLabController::class, 'append'], $auth);
+    $r->delete('/api/lab/files/{name}', [FileLabController::class, 'destroy'], $auth);
+
+    // Database Lab (the user's rows of lab_contacts)
+    $r->get('/api/lab/db/contacts', [DbLabController::class, 'select'], $auth);
+    $r->post('/api/lab/db/contacts', [DbLabController::class, 'insert'], $auth);
+    $r->put('/api/lab/db/contacts/{id}', [DbLabController::class, 'update'], $auth);
+    $r->delete('/api/lab/db/contacts/{id}', [DbLabController::class, 'delete'], $auth);
+    $r->post('/api/lab/db/reset', [DbLabController::class, 'reset'], $auth);
 
     // --- Experiments (activity tracking) -----------------------------------
     $r->post('/api/experiments/{slug}/runs', [ExperimentController::class, 'recordRun'], $auth);

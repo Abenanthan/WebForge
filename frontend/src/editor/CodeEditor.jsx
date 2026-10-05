@@ -6,6 +6,7 @@ import { indentWithTab } from '@codemirror/commands';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 import { javascript } from '@codemirror/lang-javascript';
+import { php } from '@codemirror/lang-php';
 import { setDiagnostics } from '@codemirror/lint';
 import { webforgeEditorTheme } from './editorTheme.js';
 import styles from './CodeEditor.module.css';
@@ -34,6 +35,7 @@ const LANGUAGES = {
   css: () => css(),
   javascript: () => javascript(),
   jsx: () => javascript({ jsx: true }),
+  php: () => php({ plain: true }),
 };
 
 /**
@@ -83,6 +85,9 @@ export const CodeEditor = forwardRef(function CodeEditor(
     const view = new EditorView({ parent: hostRef.current, state: createState(value) });
     viewRef.current = view;
     statesRef.current.set(docId, view.state);
+    // Line heights are measured with the fallback font; re-measure once the web fonts load
+    // so gutter numbers stay aligned with their lines.
+    document.fonts?.ready.then(() => viewRef.current?.requestMeasure());
     return () => {
       view.destroy();
       viewRef.current = null;

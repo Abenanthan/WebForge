@@ -64,6 +64,15 @@ describe('apiClient', () => {
     expect(listener).toHaveBeenCalledWith('SESSION_EXPIRED');
   });
 
+  it('does not treat a lab-specific 401 as losing the WebForge session', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse(fail('LAB_NOT_LOGGED_IN', 'lab only'), 401));
+    const listener = vi.fn();
+    const off = onUnauthorized(listener);
+    await api.get('/lab/session/protected').catch(() => {});
+    off();
+    expect(listener).not.toHaveBeenCalled();
+  });
+
   it('reports a network failure as a NETWORK_ERROR ApiError and logs it', async () => {
     vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('Failed to fetch'));
     const error = await api.get('/health').catch((e) => e);

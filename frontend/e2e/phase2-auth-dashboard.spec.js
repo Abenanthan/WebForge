@@ -43,7 +43,7 @@ test('demo login shows a dashboard built from real API data, then logs out', asy
 
   // Live modules are links; planned modules are listed but are not links.
   await expect(page.getByRole('link', { name: /Web Playground/ }).first()).toBeVisible();
-  await expect(page.getByRole('link', { name: /Server Lab/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Component Studio/ })).toHaveCount(0);
 
   // Theme toggle flips the theme and the choice survives a reload.
   const html = page.locator('html');

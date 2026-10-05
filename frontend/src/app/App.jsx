@@ -19,6 +19,12 @@ const EventVisualizerPage = lazy(() => import('../modules/event-visualizer/Event
 const FormLabPage = lazy(() => import('../modules/form-lab/FormLabPage.jsx'));
 const AjaxMonitorPage = lazy(() => import('../modules/ajax-monitor/AjaxMonitorPage.jsx'));
 const CanvasStudioPage = lazy(() => import('../modules/canvas-studio/CanvasStudioPage.jsx'));
+const ServerLabLayout = lazy(() => import('../modules/server-lab/ServerLabLayout.jsx'));
+const ServerExperimentsTab = lazy(() => import('../modules/server-lab/ExperimentsTab.jsx'));
+const ServerFormTab = lazy(() => import('../modules/server-lab/FormTab.jsx'));
+const ServerSessionsTab = lazy(() => import('../modules/server-lab/SessionsTab.jsx'));
+const ServerFilesTab = lazy(() => import('../modules/server-lab/FilesTab.jsx'));
+const DatabaseLabPage = lazy(() => import('../modules/database-lab/DatabaseLabPage.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -48,6 +54,17 @@ const router = createBrowserRouter([
           { path: 'lab/form-lab', element: <FormLabPage /> },
           { path: 'lab/ajax-monitor', element: <AjaxMonitorPage /> },
           { path: 'lab/canvas-studio', element: <CanvasStudioPage /> },
+          {
+            path: 'lab/server-lab',
+            element: <ServerLabLayout />,
+            children: [
+              { index: true, element: <ServerExperimentsTab /> },
+              { path: 'form', element: <ServerFormTab /> },
+              { path: 'sessions', element: <ServerSessionsTab /> },
+              { path: 'files', element: <ServerFilesTab /> },
+            ],
+          },
+          { path: 'lab/database-lab', element: <DatabaseLabPage /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

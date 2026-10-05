@@ -50,6 +50,12 @@ kbd,
 pre {
   font-family: var(--font-mono);
   font-size: 0.92em;
+  /* Show exactly what is typed: no "<=" → "≤" ligatures in code. */
+  font-variant-ligatures: none;
+}
+
+.mono {
+  font-variant-ligatures: none;
 }
 
 ul,

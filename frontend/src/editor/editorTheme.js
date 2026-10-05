@@ -14,7 +14,7 @@ const chrome = EditorView.theme({
     fontSize: '13.5px',
   },
   '&.cm-focused': { outline: 'none' },
-  '.cm-scroller': { fontFamily: 'var(--font-mono)', lineHeight: '1.65' },
+  '.cm-scroller': { fontFamily: 'var(--font-mono)', lineHeight: '1.65', fontVariantLigatures: 'none' },
   '.cm-content': { caretColor: 'var(--accent)', padding: '10px 0' },
   '.cm-cursor, .cm-dropCursor': { borderLeftColor: 'var(--accent)', borderLeftWidth: '2px' },
   '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection': {

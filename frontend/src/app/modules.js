@@ -58,9 +58,9 @@ export const MODULE_GROUPS = [
     id: 'server',
     label: 'Server-side Labs',
     modules: [
-      { id: 'server-lab', title: 'Server Lab', path: '/lab/server-lab', icon: Server, layer: 'server', status: 'planned', phase: 6,
+      { id: 'server-lab', title: 'Server Lab', path: '/lab/server-lab', icon: Server, layer: 'server', status: 'ready',
         description: 'PHP processing, sessions and file handling, step by step.' },
-      { id: 'database-lab', title: 'Database Lab', path: '/lab/database-lab', icon: Database, layer: 'database', status: 'planned', phase: 6,
+      { id: 'database-lab', title: 'Database Lab', path: '/lab/database-lab', icon: Database, layer: 'database', status: 'ready',
         description: 'INSERT, SELECT, UPDATE, DELETE with the real SQL shown.' },
     ],
   },

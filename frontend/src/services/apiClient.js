@@ -11,6 +11,7 @@ import { networkLog } from './networkLog.js';
 
 const API_BASE = '/api';
 const SAFE_METHODS = new Set(['GET', 'HEAD']);
+const AUTH_LOST_CODES = new Set(['UNAUTHENTICATED', 'SESSION_EXPIRED']);
 
 let csrfToken = null;
 const unauthorizedListeners = new Set();
@@ -133,7 +134,10 @@ export async function apiRequest(path, options = {}, isRetry = false) {
       await refreshCsrf();
       return apiRequest(path, { ...options, traceId }, true);
     }
-    if (res.status === 401 && !path.startsWith('/auth/')) {
+    // Only the app's own authentication codes mean "your WebForge session is gone". Labs return
+    // 401 for their own reasons (e.g. the Session Demonstrator's separate login), which must
+    // not log the user out of WebForge.
+    if (res.status === 401 && AUTH_LOST_CODES.has(code) && !path.startsWith('/auth/')) {
       for (const fn of unauthorizedListeners) fn(code);
     }
     throw new ApiError({ status: res.status, code, message, fields: fields ?? {}, meta: json.meta });

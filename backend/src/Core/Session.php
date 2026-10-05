@@ -15,6 +15,9 @@ namespace WebForge\Core;
 final class Session
 {
     private bool $expired = false;
+    /** Authenticated user, read once when the session starts. Labs may later swap $_SESSION
+     *  (e.g. the Session Demonstrator's second session), so auth must not be re-read from it. */
+    private ?array $auth = null;
 
     public function __construct(private readonly array $config)
     {
@@ -48,6 +51,7 @@ final class Session
         }
         $_SESSION['created'] ??= $now;
         $_SESSION['lastSeen'] = $now;
+        $this->auth = $_SESSION['auth'] ?? null;
     }
 
     /** Write the session and release its lock; $_SESSION stays readable for this request. */
@@ -66,12 +70,12 @@ final class Session
 
     public function user(): ?array
     {
-        return $_SESSION['auth'] ?? null;
+        return $this->auth;
     }
 
     public function userId(): ?int
     {
-        return isset($_SESSION['auth']['userId']) ? (int) $_SESSION['auth']['userId'] : null;
+        return isset($this->auth['userId']) ? (int) $this->auth['userId'] : null;
     }
 
     /** Called after credentials are verified. New id prevents session fixation. */
@@ -85,11 +89,13 @@ final class Session
             'role'    => $user['role'],
             'loginAt' => time(),
         ];
+        $this->auth = $_SESSION['auth'];
         $this->rotateCsrf();
     }
 
     public function logout(): void
     {
+        $this->auth = null;
         $_SESSION = [];
         $p = session_get_cookie_params();
         setcookie(session_name(), '', [
