@@ -64,7 +64,7 @@ const router = createBrowserRouter([
         element: <AppShell />,
         children: [
           { index: true, element: <DashboardPage /> },
-          // Module routes are added here as each phase lands (see app/modules.js).
+          // One route (or nested route group) per module in app/modules.js.
           { path: 'lab/web-playground', element: <WebPlaygroundPage /> },
           { path: 'lab/js-playground', element: <JsPlaygroundPage /> },
           { path: 'lab/dom-explorer', element: <DomExplorerPage /> },
@@ -126,7 +126,10 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+], {
+  // '/' normally; '/webforge' when the app is built for Apache (npm run build:apache).
+  basename: import.meta.env.BASE_URL.replace(/\/$/, '') || '/',
+});
 
 export function App() {
   return (

@@ -8,14 +8,14 @@ import { EmptyState, ErrorState, LoadingState } from '../../components/ui/StateV
 import { useApi } from '../../hooks/useApi.js';
 import { useNetworkLog } from '../../hooks/useNetworkLog.js';
 import { useToast } from '../../app/providers/ToastProvider.jsx';
-import { api } from '../../services/apiClient.js';
+import { API_BASE, api } from '../../services/apiClient.js';
 import { networkLog } from '../../services/networkLog.js';
 import { saveTrace, traceFromNetworkEntry } from '../../trace/traceBus.js';
 import { formatMs, relativeTime } from '../../utils/format.js';
 import { TraceViewer } from './TraceViewer.jsx';
 import styles from './ExecutionTrace.module.css';
 
-const traceable = (e) => e.state !== 'pending' && e.response?.body?.meta?.trace && !e.url.startsWith('/api/traces');
+const traceable = (e) => e.state !== 'pending' && e.response?.body?.meta?.trace && !e.url.startsWith(`${API_BASE}/traces`);
 
 export default function ExplorerTab() {
   const [params, setParams] = useSearchParams();

@@ -4,8 +4,8 @@ DirectoryIndex index.php
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # Must equal APP_BASE_PATH + "/" (the Apache Alias in backend/config/apache-webforge.conf)
-    RewriteBase /webforge/
+    # The Apache Alias for the API (backend/config/apache-webforge.conf): APP_BASE_PATH + "/api/"
+    RewriteBase /webforge/api/
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [QSA,L]
 </IfModule>

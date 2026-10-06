@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { deleteProject, projectIdFrom } from './support/cleanup.js';
 
 const SHOTS = process.env.WEBFORGE_SCREENSHOTS;
 const shot = async (page, name) => SHOTS && page.screenshot({ path: `${SHOTS}/${name}.png`, fullPage: true });
@@ -140,5 +141,6 @@ test.describe('Canvas Studio', () => {
     await page.reload();
     await expect.poll(() => pixel(page, 0.5, 0.5)).toEqual([239, 68, 68, 255]); // #ef4444 restored from PNG
     await shot(page, '43-canvas');
+    await deleteProject(page, projectIdFrom(page));
   });
 });

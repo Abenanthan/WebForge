@@ -1,8 +1,10 @@
-# Copied into dist/ by `npm run build`. Used when Apache serves the built SPA.
+# Copied into the build output. Used when Apache serves the built SPA
+# (npm run build:apache, served at /webforge/ by backend/config/apache-webforge.conf).
 Options -Indexes
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /webforge/
     # Client-side routes (/lab/..., /trace, /learn, ...) all load index.html.
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d

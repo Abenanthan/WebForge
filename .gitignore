@@ -1,6 +1,7 @@
 # Dependencies & builds
 node_modules/
 frontend/dist/
+frontend/dist-apache/
 .vite/
 
 # Secrets

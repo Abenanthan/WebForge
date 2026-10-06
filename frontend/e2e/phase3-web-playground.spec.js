@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { deleteProject, projectIdFrom } from './support/cleanup.js';
 
 const SHOTS = process.env.WEBFORGE_SCREENSHOTS;
 const shot = async (page, name) => SHOTS && page.screenshot({ path: `${SHOTS}/${name}.png` });
@@ -113,6 +114,7 @@ test('save as project, reload it, and guard unsaved changes', async ({ page }) =
   await dialog.getByLabel('Project name').fill(title);
   await dialog.getByRole('button', { name: 'Save project' }).click();
   await expect(page).toHaveURL(/\?project=\d+/);
+  const projectId = projectIdFrom(page);
   await expect(page.getByText(/^Saved (just now|.+ ago)$/)).toBeVisible();
 
   // Edit, save with Ctrl+S, reload: the change persists from the database.
@@ -134,6 +136,7 @@ test('save as project, reload it, and guard unsaved changes', async ({ page }) =
   // The dashboard reflects the saved project and the run.
   await expect(page.getByRole('region', { name: 'Recent projects' }).getByText(title)).toBeVisible();
   await expect(page.getByText('Run a web page in the live preview').first()).toBeVisible();
+  await deleteProject(page, projectId);
 });
 
 test('compact layout switches between code, preview and output', async ({ page }) => {

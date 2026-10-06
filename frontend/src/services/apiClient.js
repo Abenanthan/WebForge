@@ -9,7 +9,8 @@ import { networkLog } from './networkLog.js';
  *  - Records every request/response in networkLog
  */
 
-const API_BASE = '/api';
+// '/api' in development and preview (proxied by Vite); '/webforge/api' in the Apache build (base /webforge/).
+export const API_BASE = `${import.meta.env.BASE_URL}api`;
 const SAFE_METHODS = new Set(['GET', 'HEAD']);
 const AUTH_LOST_CODES = new Set(['UNAUTHENTICATED', 'SESSION_EXPIRED']);
 

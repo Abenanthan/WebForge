@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/Button.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
 import { EmptyState } from '../../components/ui/StateView.jsx';
 import { FlowPipeline } from '../../visualizers/FlowPipeline.jsx';
-import { apiRequest } from '../../services/apiClient.js';
+import { API_BASE, apiRequest } from '../../services/apiClient.js';
 import { recordExperimentRun } from '../../services/activity.js';
 import { formatMs } from '../../utils/format.js';
 import { EMPTY_VALUES, FIELDS, PRESETS, firstError, validateClient } from './formRules.js';
@@ -139,7 +139,7 @@ export default function FormLabPage() {
     const report = meta.validation ?? {};
     const serverFailed = Object.keys(error?.fields ?? {});
 
-    record.request = { method: 'POST', url: '/api/lab/forms/validate', payload: mask(values), traceId: meta.traceId, roundTrip, status };
+    record.request = { method: 'POST', url: `${API_BASE}/lab/forms/validate`, payload: mask(values), traceId: meta.traceId, roundTrip, status };
     record.server = { report, steps: validationSteps, durationMs: meta.durationMs, failed: serverFailed, fields: error?.fields ?? {} };
     record.database = dbSteps;
     record.response = { status, body: error ? { ok: false, error: { code: error.code, message: error.message, fields: error.fields } } : { ok: true, data: envelope.data } };
