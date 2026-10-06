@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FlowPipeline } from '../../visualizers/FlowPipeline.jsx';
 import { EmptyState } from '../../components/ui/StateView.jsx';
 import { formatMs } from '../../utils/format.js';
@@ -100,6 +101,9 @@ export function RequestDetails({ entry, uiMs }) {
             <FlowPipeline steps={steps} orientation="horizontal" label="Request flow" />
             <Timing entry={entry} uiMs={uiMs} />
             {entry.error && <p className={styles.errorText}>{entry.error}</p>}
+            {meta?.trace && (
+              <Link className={styles.traceLink} to={`/trace?request=${encodeURIComponent(entry.id)}`}>Open in Execution Trace →</Link>
+            )}
           </>
         )}
 

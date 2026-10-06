@@ -37,7 +37,7 @@ export class ApiError extends Error {
   }
 }
 
-function newTraceId() {
+export function newTraceId() {
   if (globalThis.crypto?.randomUUID) return crypto.randomUUID();
   // RFC 4122 v4 fallback for older browsers
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -59,7 +59,8 @@ async function refreshCsrf() {
  */
 export async function apiRequest(path, options = {}, isRetry = false) {
   const method = (options.method ?? 'GET').toUpperCase();
-  const traceId = options.traceId ?? newTraceId();
+  const { trace } = options; // optional TraceBus trace: records network + server spans
+  const traceId = options.traceId ?? trace?.id ?? newTraceId();
   const url = `${API_BASE}${path}`;
 
   const headers = { Accept: 'application/json', 'X-Trace-Id': traceId };
@@ -80,6 +81,14 @@ export async function apiRequest(path, options = {}, isRetry = false) {
       headers: { ...headers, ...(headers['X-CSRF-Token'] ? { 'X-CSRF-Token': '•••• (session token)' } : {}) },
       body: options.body ?? null,
     },
+  });
+
+  const span = trace?.begin('network', `HTTP ${method} ${url}`, {
+    method,
+    url,
+    headers: { ...headers, ...(headers['X-CSRF-Token'] ? { 'X-CSRF-Token': '•••• (session token)' } : {}) },
+    body: options.body ?? null,
+    ...(isRetry ? { retry: 'sent again with a fresh CSRF token' } : {}),
   });
 
   let res;
@@ -107,11 +116,23 @@ export async function apiRequest(path, options = {}, isRetry = false) {
       durationMs: performance.now() - startedAt,
       error: aborted ? 'Request aborted' : 'Network error — is the API server running?',
     });
+    span?.end({ status: 'error', detail: { error: aborted ? 'aborted' : 'network error' } });
     if (aborted) throw err;
     throw new ApiError({ status: 0, code: 'NETWORK_ERROR', message: 'Cannot reach the server. Check that Apache is running.' });
   }
 
   const durationMs = performance.now() - startedAt;
+  if (trace) {
+    const to = performance.now();
+    const failed = !(res.ok && json?.ok);
+    span.end({ status: failed ? 'error' : 'success', detail: { status: res.status } });
+    trace.addServer(json?.meta, { from: span.from, to });
+    trace.record('network', `Response ${res.status} ${res.statusText}`.trim(), {
+      from: to,
+      status: failed ? 'error' : 'success',
+      detail: { status: res.status, size, headers: Object.fromEntries(res.headers.entries()), body: json && { ok: json.ok, data: json.data, error: json.error } },
+    });
+  }
   networkLog.finish(logId, {
     state: res.ok && json?.ok ? 'success' : 'error',
     status: res.status,

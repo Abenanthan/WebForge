@@ -11,6 +11,7 @@ use WebForge\Controllers\ProjectController;
 use WebForge\Controllers\ServerLabController;
 use WebForge\Controllers\SessionLabController;
 use WebForge\Controllers\StatsController;
+use WebForge\Controllers\TraceController;
 use WebForge\Core\App;
 use WebForge\Core\Request;
 use WebForge\Core\Response;
@@ -102,6 +103,12 @@ return static function (Router $r): void {
     $r->put('/api/lab/db/contacts/{id}', [DbLabController::class, 'update'], $auth);
     $r->delete('/api/lab/db/contacts/{id}', [DbLabController::class, 'delete'], $auth);
     $r->post('/api/lab/db/reset', [DbLabController::class, 'reset'], $auth);
+
+    // --- Execution Trace ----------------------------------------------------
+    $r->get('/api/traces', [TraceController::class, 'index'], $auth);
+    $r->post('/api/traces', [TraceController::class, 'store'], $auth);
+    $r->get('/api/traces/{uid}', [TraceController::class, 'show'], $auth);
+    $r->delete('/api/traces/{uid}', [TraceController::class, 'destroy'], $auth);
 
     // --- Experiments (activity tracking) -----------------------------------
     $r->post('/api/experiments/{slug}/runs', [ExperimentController::class, 'recordRun'], $auth);

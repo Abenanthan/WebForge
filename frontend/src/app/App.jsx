@@ -33,6 +33,9 @@ const StateLabLayout = lazy(() => import('../modules/state-lab/StateLabLayout.js
 const StateTab = lazy(() => import('../modules/state-lab/StateTab.jsx'));
 const HooksTab = lazy(() => import('../modules/state-lab/HooksTab.jsx'));
 const RoutingVisualizerPage = lazy(() => import('../modules/routing/RoutingVisualizerPage.jsx'));
+const ExecutionTraceLayout = lazy(() => import('../modules/execution-trace/ExecutionTraceLayout.jsx'));
+const TraceExplorerTab = lazy(() => import('../modules/execution-trace/ExplorerTab.jsx'));
+const FullStackFormTab = lazy(() => import('../modules/execution-trace/FullStackFormTab.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -91,6 +94,14 @@ const router = createBrowserRouter([
             ],
           },
           { path: 'lab/routing-visualizer', element: <RoutingVisualizerPage /> },
+          {
+            path: 'trace',
+            element: <ExecutionTraceLayout />,
+            children: [
+              { index: true, element: <TraceExplorerTab /> },
+              { path: 'form', element: <FullStackFormTab /> },
+            ],
+          },
           { path: '*', element: <NotFoundPage /> },
         ],
       },

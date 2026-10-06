@@ -80,7 +80,7 @@ export const MODULE_GROUPS = [
     id: 'insight',
     label: 'Insight',
     modules: [
-      { id: 'execution-trace', title: 'Execution Trace', path: '/trace', icon: Waypoints, layer: 'network', status: 'planned', phase: 9, signature: true,
+      { id: 'execution-trace', title: 'Execution Trace', path: '/trace', icon: Waypoints, layer: 'network', status: 'ready', signature: true,
         description: 'See one operation travel through every layer of the stack.' },
       { id: 'projects', title: 'Projects', path: '/projects', icon: FolderKanban, layer: 'database', status: 'planned', phase: 10,
         description: 'Save, open and manage your experiments.' },

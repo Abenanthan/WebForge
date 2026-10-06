@@ -488,3 +488,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.traceLink {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+  color: var(--accent);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
