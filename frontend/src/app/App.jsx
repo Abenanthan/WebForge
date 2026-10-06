@@ -36,6 +36,13 @@ const RoutingVisualizerPage = lazy(() => import('../modules/routing/RoutingVisua
 const ExecutionTraceLayout = lazy(() => import('../modules/execution-trace/ExecutionTraceLayout.jsx'));
 const TraceExplorerTab = lazy(() => import('../modules/execution-trace/ExplorerTab.jsx'));
 const FullStackFormTab = lazy(() => import('../modules/execution-trace/FullStackFormTab.jsx'));
+const ProjectsPage = lazy(() => import('../pages/projects/ProjectsPage.jsx'));
+const LearnLayout = lazy(() => import('../modules/learn/LearnLayout.jsx'));
+const AssessmentsTab = lazy(() => import('../modules/learn/AssessmentsTab.jsx'));
+const QuizPage = lazy(() => import('../modules/learn/QuizPage.jsx'));
+const AttemptPage = lazy(() => import('../modules/learn/AttemptPage.jsx'));
+const ProgressTab = lazy(() => import('../modules/learn/ProgressTab.jsx'));
+const HistoryTab = lazy(() => import('../modules/learn/HistoryTab.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -100,6 +107,18 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <TraceExplorerTab /> },
               { path: 'form', element: <FullStackFormTab /> },
+            ],
+          },
+          { path: 'projects', element: <ProjectsPage /> },
+          {
+            path: 'learn',
+            element: <LearnLayout />,
+            children: [
+              { index: true, element: <AssessmentsTab /> },
+              { path: 'quiz/:slug', element: <QuizPage /> },
+              { path: 'attempts/:id', element: <AttemptPage /> },
+              { path: 'progress', element: <ProgressTab /> },
+              { path: 'history', element: <HistoryTab /> },
             ],
           },
           { path: '*', element: <NotFoundPage /> },

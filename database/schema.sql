@@ -32,6 +32,16 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     KEY idx_attempts_email_time (email, attempted_at)
 ) ENGINE=InnoDB;
 
+-- Sliding-window rate limiting for costly or abusable actions (registration, writes).
+-- One row per accepted request; rows older than the longest window are pruned.
+CREATE TABLE IF NOT EXISTS rate_limit_hits (
+    id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    bucket          VARCHAR(40)  NOT NULL COMMENT 'e.g. register, trace-save',
+    subject         VARCHAR(64)  NOT NULL COMMENT 'IP address or user:<id>',
+    hit_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_rate_bucket_subject_time (bucket, subject, hit_at)
+) ENGINE=InnoDB;
+
 -- ---------------------------------------------------------------------
 -- Learning catalogue
 -- ---------------------------------------------------------------------

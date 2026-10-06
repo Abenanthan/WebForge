@@ -155,7 +155,7 @@ button.body:hover {
 .done .node {
   border-color: var(--layer);
   background: color-mix(in srgb, var(--layer) 18%, var(--surface));
-  color: var(--layer);
+  color: color-mix(in srgb, var(--layer) 65%, var(--text));
 }
 
 .done .body {

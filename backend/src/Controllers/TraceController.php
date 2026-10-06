@@ -8,6 +8,7 @@ use WebForge\Core\HttpException;
 use WebForge\Core\Request;
 use WebForge\Core\Response;
 use WebForge\Core\Validator;
+use WebForge\Services\RateLimiter;
 
 /**
  * Execution Trace storage. The browser records client spans (UI, events,
@@ -116,6 +117,7 @@ final class TraceController
 
         $uid = strtolower($head['traceId']);
         $userId = $this->app->userId();
+        (new RateLimiter($this->app))->hit('trace-save', 'user:' . $userId);
         $existing = $this->app->db->one('SELECT user_id FROM traces WHERE trace_uid = ?', [$uid], 'Check the trace id is new');
         if ($existing !== null) {
             // Same user: the trace was already saved (e.g. a request traced twice). Never reveal other users' ids.

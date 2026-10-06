@@ -47,7 +47,7 @@
 .opTab[aria-selected='true'] {
   background: var(--surface);
   box-shadow: var(--shadow-sm);
-  color: var(--op-color);
+  color: color-mix(in srgb, var(--op-color) 65%, var(--text));
 }
 
 .op-SELECT { --op-color: var(--layer-network); }
@@ -145,7 +145,7 @@
   padding: 1px 8px;
   border-radius: 4px;
   background: color-mix(in srgb, var(--op-color) 15%, transparent);
-  color: var(--op-color);
+  color: color-mix(in srgb, var(--op-color) 65%, var(--text));
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
@@ -179,7 +179,7 @@
   padding: 0 3px;
   border-radius: 3px;
   background: color-mix(in srgb, var(--layer-database) 25%, transparent);
-  color: var(--layer-database);
+  color: color-mix(in srgb, var(--layer-database) 65%, var(--text));
   font-weight: 700;
 }
 
@@ -196,7 +196,7 @@
 }
 
 .paramIndex {
-  color: var(--layer-database);
+  color: color-mix(in srgb, var(--layer-database) 65%, var(--text));
   font-family: var(--font-mono);
   font-weight: 700;
 }

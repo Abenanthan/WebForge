@@ -49,7 +49,7 @@
 
   --text: #e6eaf2;
   --text-muted: #9aa5bd;
-  --text-faint: #6b7792;
+  --text-faint: #8e9ab4; /* ≥4.5:1 on every dark surface, incl. tinted selections (WCAG AA) */
 
   --accent: #7c8cff;
   --accent-strong: #9aa6ff;
@@ -84,7 +84,7 @@
   /* Code editor + syntax highlighting */
   --editor-bg: #0c111c;
   --editor-gutter: #0c111c;
-  --editor-line-number: #4a5672;
+  --editor-line-number: #7a87a3; /* 5.2:1 on the gutter */
   --editor-active-line: rgba(124, 140, 255, 0.06);
   --editor-selection: rgba(124, 140, 255, 0.28);
   --syn-keyword: #c792ea;
@@ -114,7 +114,7 @@
 
   --text: #0f172a;
   --text-muted: #4b5568;
-  --text-faint: #6b7487;
+  --text-faint: #5f687b; /* ≥4.5:1 on every light surface (WCAG AA) */
 
   --accent: #4f5bd5;
   --accent-strong: #3d48bf;
@@ -124,11 +124,11 @@
   --gradient: linear-gradient(135deg, #4f5bd5 0%, #0891b2 100%);
   --gradient-soft: linear-gradient(135deg, rgba(79, 91, 213, 0.08), rgba(8, 145, 178, 0.05));
 
-  --success: #059669;
+  --success: #047857;
   --success-soft: rgba(5, 150, 105, 0.1);
   --warning: #b45309;
   --warning-soft: rgba(180, 83, 9, 0.1);
-  --danger: #dc2626;
+  --danger: #b91c1c;
   --danger-soft: rgba(220, 38, 38, 0.08);
 
   --layer-ui: #334155;
@@ -147,17 +147,17 @@
 
   --editor-bg: #ffffff;
   --editor-gutter: #fafbfd;
-  --editor-line-number: #9aa3b5;
+  --editor-line-number: #646d80; /* 5:1 on the gutter */
   --editor-active-line: rgba(79, 91, 213, 0.05);
   --editor-selection: rgba(79, 91, 213, 0.18);
   --syn-keyword: #7c3aed;
-  --syn-string: #15803d;
-  --syn-number: #c2410c;
-  --syn-comment: #8590a6;
+  --syn-string: #166534;
+  --syn-number: #9a3412;
+  --syn-comment: #566072;
   --syn-function: #1d4ed8;
-  --syn-property: #0e7490;
+  --syn-property: #155e75;
   --syn-tag: #be123c;
-  --syn-attribute: #a16207;
+  --syn-attribute: #854d0e;
   --syn-type: #a16207;
   --syn-operator: #0369a1;
   --syn-variable: #0f172a;

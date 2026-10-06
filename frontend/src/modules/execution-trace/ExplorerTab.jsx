@@ -97,7 +97,7 @@ export default function ExplorerTab() {
                   {traces.map((t) => (
                     <li key={t.traceId}>
                       <button type="button" aria-current={t.traceId === selectedId ? 'true' : undefined} onClick={() => select(t.traceId)}>
-                        <span className={`${styles.statusDot} ${t.status === 'error' ? styles.statusDotError : ''}`} aria-label={t.status} />
+                        <span className={`${styles.statusDot} ${t.status === 'error' ? styles.statusDotError : ''}`} role="img" aria-label={t.status} />
                         <span className={styles.traceLabel}>{t.label}</span>
                         <span className={styles.traceMeta}>{t.module} · {t.steps} steps · {formatMs(t.totalMs)}</span>
                         <time className={styles.traceTime} dateTime={t.createdAt}>{relativeTime(t.createdAt)}</time>

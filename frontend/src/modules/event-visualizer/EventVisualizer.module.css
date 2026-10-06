@@ -61,7 +61,7 @@
 .demoTitle {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  color: var(--layer-event);
+  color: color-mix(in srgb, var(--layer-event) 65%, var(--text));
 }
 
 .demoButton {
@@ -284,7 +284,7 @@
   padding: 0 5px;
   border-radius: 3px;
   background: color-mix(in srgb, var(--layer-dom) 15%, transparent);
-  color: var(--layer-dom);
+  color: color-mix(in srgb, var(--layer-dom) 65%, var(--text));
   font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 700;

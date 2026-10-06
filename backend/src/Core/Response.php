@@ -47,6 +47,14 @@ final class Response
         header('X-Content-Type-Options: nosniff');
         header('Cache-Control: no-store');
         header('X-Trace-Id: ' . $tracer->traceId);
+        // JSON is data, never a document: forbid rendering, framing and cross-origin embedding.
+        header("Content-Security-Policy: default-src 'none'; frame-ancestors 'none'");
+        header('X-Frame-Options: DENY');
+        header('Referrer-Policy: same-origin');
+        header('Cross-Origin-Resource-Policy: same-origin');
+        if ($this->status === 429) {
+            header('Retry-After: 60');
+        }
 
         echo json_encode([
             'ok'    => $this->ok,

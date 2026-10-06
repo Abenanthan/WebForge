@@ -1,9 +1,13 @@
 import React, { Component as ReactComponent, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Code, Eye, Lightbulb, Network, RotateCcw } from 'lucide-react';
+import { Code, Eye, FolderOpen, Lightbulb, Network, RotateCcw, Save, X } from 'lucide-react';
 import { Card } from '../../components/ui/Card.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { EmptyState } from '../../components/ui/StateView.jsx';
+import { Modal } from '../../components/ui/Modal.jsx';
+import { TextField } from '../../components/ui/TextField.jsx';
+import { useToast } from '../../app/providers/ToastProvider.jsx';
+import { projectsApi } from '../../services/projects.js';
 import { CodeEditor } from '../../editor/CodeEditor.jsx';
 import { FlowPipeline } from '../../visualizers/FlowPipeline.jsx';
 import { TreeView } from '../../visualizers/TreeView.jsx';
@@ -72,7 +76,13 @@ function ElementLabel({ node }) {
 export default function JsxTab() {
   const [params, setParams] = useSearchParams();
   const example = findExample(params.get('example'));
+  const projectParam = params.get('project');
   const [edits, setEdits] = useState({});
+  // A saved JSX project: one file named <exampleId>.jsx, so it reopens with that example's scope.
+  const [project, setProject] = useState(null); // { id, title, description, exampleId, saved }
+  const [projectError, setProjectError] = useState(null);
+  const [saveDialog, setSaveDialog] = useState(null); // { title, busy, error }
+  const toast = useToast();
   const source = edits[example.id] ?? example.code;
   const [debounced, setDebounced] = useState(source);
   const [count, setCount] = useState(0);
@@ -86,6 +96,42 @@ export default function JsxTab() {
     setDebounced(source);
     setCount(0);
   }, [example.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!projectParam || project?.id === Number(projectParam)) return undefined;
+    const controller = new AbortController();
+    setProjectError(null);
+    projectsApi.get(projectParam, { signal: controller.signal }).then((p) => {
+      const file = p.files.find((f) => f.filename.endsWith('.jsx'));
+      if (p.type !== 'jsx' || !file) {
+        setProjectError(`"${p.title}" is not a JSX project.`);
+        return;
+      }
+      const ex = findExample(file.filename.replace(/.jsx$/, ''));
+      setEdits((e) => ({ ...e, [ex.id]: file.content }));
+      setProject({ id: p.id, title: p.title, description: p.description, exampleId: ex.id, saved: file.content });
+      setParams({ example: ex.id, project: String(p.id) }, { replace: true });
+    }, (err) => err.name !== 'AbortError' && setProjectError(err.message));
+    return () => controller.abort();
+  }, [projectParam]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const inProject = project && project.exampleId === example.id && projectParam === String(project.id);
+  const dirty = inProject && source !== project.saved;
+
+  async function saveProject(title) {
+    const payload = { title, type: 'jsx', description: inProject ? project.description : null, files: [{ filename: `${example.id}.jsx`, content: source }] };
+    if (!inProject) setSaveDialog((d) => ({ ...d, busy: true, error: null }));
+    try {
+      const saved = inProject ? await projectsApi.save(project.id, payload) : await projectsApi.create(payload);
+      setProject({ id: saved.id, title: saved.title, description: saved.description, exampleId: example.id, saved: source });
+      setParams({ example: example.id, project: String(saved.id) }, { replace: true });
+      setSaveDialog(null);
+      toast.success(`Saved "${saved.title}".`);
+    } catch (err) {
+      if (inProject) toast.error(`Save failed: ${err.message}`);
+      else setSaveDialog((d) => ({ ...d, busy: false, error: err.fields?.title ?? err.message }));
+    }
+  }
 
   const scope = example.scope({ count, setCount });
   const compiled = useMemo(() => compileJsx(debounced, Object.keys(scope)), [debounced, example.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -125,6 +171,23 @@ export default function JsxTab() {
             {ex.title}
           </button>
         ))}
+      </div>
+
+      <div className={styles.projectBar}>
+        {projectError ? <p className={styles.errorText} role="alert">{projectError}</p>
+          : inProject ? (
+            <p><FolderOpen size={15} aria-hidden="true" /> Project <strong>{project.title}</strong> · {dirty ? 'unsaved changes' : 'saved'}</p>
+          ) : <p className={styles.muted}>Edit an example, then save it as a project to keep your version.</p>}
+        <div className={styles.projectActions}>
+          {inProject ? (
+            <>
+              <Button size="sm" variant="primary" icon={Save} disabled={!dirty} onClick={() => saveProject(project.title)}>Save</Button>
+              <Button size="sm" variant="ghost" icon={X} onClick={() => setParams({ example: example.id })}>Close project</Button>
+            </>
+          ) : (
+            <Button size="sm" icon={Save} onClick={() => setSaveDialog({ title: '', busy: false, error: null })}>Save as project</Button>
+          )}
+        </div>
       </div>
 
       <Card>
@@ -169,6 +232,18 @@ export default function JsxTab() {
           {example.stateful && <p className={styles.muted}>count is real React state held by this page: clicking re-runs the JSX with the new value.</p>}
         </Card>
       </div>
+
+      <Modal open={Boolean(saveDialog)} onClose={() => setSaveDialog(null)} title="Save as project"
+        description={`Saves your JSX for "${example.title}" to Projects.`}
+        footer={<><Button onClick={() => setSaveDialog(null)}>Cancel</Button><Button variant="primary" loading={saveDialog?.busy}
+          onClick={() => (saveDialog.title.trim() ? saveProject(saveDialog.title.trim()) : setSaveDialog((d) => ({ ...d, error: 'Give the project a title.' })))}>Save</Button></>}>
+        {saveDialog && (
+          <form onSubmit={(e) => { e.preventDefault(); if (saveDialog.title.trim()) saveProject(saveDialog.title.trim()); else setSaveDialog((d) => ({ ...d, error: 'Give the project a title.' })); }} noValidate>
+            <TextField label="Title" value={saveDialog.title} maxLength={120} autoFocus error={saveDialog.error}
+              onChange={(e) => setSaveDialog((d) => ({ ...d, title: e.target.value }))} />
+          </form>
+        )}
+      </Modal>
     </div>
   );
 }

@@ -9,6 +9,7 @@ use WebForge\Core\Request;
 use WebForge\Core\Response;
 use WebForge\Core\Validator;
 use WebForge\Repositories\UserRepository;
+use WebForge\Services\RateLimiter;
 
 final class AuthController
 {
@@ -60,6 +61,8 @@ final class AuthController
             'password' => ['required', 'string', 'min:8', 'max:72', 'password'],
         ], $tracer);
         $email = mb_strtolower($data['email']);
+        // Limits mass account creation (and probing which emails exist) from one address.
+        (new RateLimiter($this->app))->hit('register', $req->ip());
 
         if ($this->users->emailExists($email)) {
             throw new HttpException(409, 'EMAIL_TAKEN', 'An account with this email already exists.', [

@@ -44,7 +44,7 @@
 
 .tool[aria-checked='true'] {
   background: var(--surface);
-  color: var(--layer-dom);
+  color: color-mix(in srgb, var(--layer-dom) 65%, var(--text));
   box-shadow: var(--shadow-sm);
   font-weight: 600;
 }
@@ -207,7 +207,7 @@
 }
 
 .eventType {
-  color: var(--layer-event);
+  color: color-mix(in srgb, var(--layer-event) 65%, var(--text));
   font-weight: 600;
 }
 

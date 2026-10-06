@@ -22,7 +22,7 @@ final class ActivityService
     public function recordRun(string $slug, string $status, ?array $input = null): array
     {
         $experiment = $this->app->db->one(
-            'SELECT id, slug, title FROM experiments WHERE slug = ?',
+            'SELECT id, slug, title, concept_id FROM experiments WHERE slug = ?',
             [$slug],
             'Find experiment by slug',
         ) ?? throw new HttpException(404, 'EXPERIMENT_NOT_FOUND', 'Unknown experiment.');
@@ -41,6 +41,10 @@ final class ActivityService
             'INSERT experiment run (activity log)',
         );
 
-        return ['id' => $this->app->db->lastInsertId(), 'slug' => $experiment['slug'], 'title' => $experiment['title']];
+        $id = $this->app->db->lastInsertId();
+        if ($status === 'success') {
+            (new ProgressService($this->app))->recompute($this->app->userId(), [(int) $experiment['concept_id']]);
+        }
+        return ['id' => $id, 'slug' => $experiment['slug'], 'title' => $experiment['title']];
     }
 }

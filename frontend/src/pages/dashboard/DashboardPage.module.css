@@ -171,7 +171,7 @@ a.launchCard:hover {
   height: 36px;
   border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--layer) 16%, transparent);
-  color: var(--layer);
+  color: color-mix(in srgb, var(--layer) 65%, var(--text));
 }
 
 .launchPhase {
@@ -197,7 +197,7 @@ a.launchCard:hover {
 }
 
 a.launchCard:hover .launchArrow {
-  color: var(--layer);
+  color: color-mix(in srgb, var(--layer) 65%, var(--text));
   transform: translateX(3px);
 }
 

@@ -179,7 +179,7 @@
   padding: 0 6px;
   border-radius: 999px;
   background: var(--layer-router);
-  color: #fff;
+  color: var(--surface); /* dark text on the light dark-theme purple, white on the light-theme one */
   font-size: 10.5px;
   font-weight: 700;
 }
@@ -247,7 +247,7 @@
 }
 
 .branch strong {
-  color: var(--layer-render);
+  color: color-mix(in srgb, var(--layer-render) 65%, var(--text));
   font-family: var(--font-mono);
 }
 
@@ -329,7 +329,7 @@
   font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 700;
-  color: var(--layer-router);
+  color: color-mix(in srgb, var(--layer-router) 65%, var(--text));
 }
 
 .redirect {

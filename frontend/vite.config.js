@@ -14,6 +14,19 @@ const apiProxy = {
   },
 };
 
+/**
+ * Security headers for the built SPA (preview here; production: public/.htaccess).
+ * The CSP only restricts what cannot affect the lab sandboxes: srcdoc iframes inherit
+ * this policy, and they carry their own stricter one (see sandbox/buildDocument.js).
+ */
+export const SECURITY_HEADERS = {
+  'Content-Security-Policy': "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; connect-src 'self'",
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'same-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+};
+
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -26,6 +39,7 @@ export default defineConfig({
     port: 4173,
     strictPort: true,
     proxy: apiProxy,
+    headers: SECURITY_HEADERS,
   },
   test: {
     environment: 'jsdom',

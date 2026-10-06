@@ -9,6 +9,7 @@ use WebForge\Core\Request;
 use WebForge\Core\Response;
 use WebForge\Core\Validator;
 use WebForge\Repositories\ProjectRepository;
+use WebForge\Services\RateLimiter;
 
 /** Project workspace: saved experiments (Web Playground, Canvas Studio, JSX Playground). */
 final class ProjectController
@@ -54,6 +55,7 @@ final class ProjectController
             'description' => ['string', 'max:500'],
         ], $this->app->tracer);
         $files = $this->validateFiles($body['files'] ?? null);
+        (new RateLimiter($this->app))->hit('project-save', 'user:' . $this->app->userId());
 
         $id = $this->app->db->transaction(function () use ($meta, $files): int {
             $id = $this->projects->create($this->app->userId(), $meta['title'], $meta['type'], $meta['description']);
@@ -75,6 +77,7 @@ final class ProjectController
             'description' => ['string', 'max:500'],
         ], $this->app->tracer);
         $files = $this->validateFiles($body['files'] ?? null);
+        (new RateLimiter($this->app))->hit('project-save', 'user:' . $this->app->userId());
         $id = (int) $project['id'];
 
         $this->app->db->transaction(function () use ($id, $meta, $files): void {

@@ -83,7 +83,7 @@
   align-items: center;
   gap: 4px;
   font-size: var(--text-xs);
-  color: var(--layer-server);
+  color: color-mix(in srgb, var(--layer-server) 65%, var(--text));
 }
 
 .presets {
@@ -334,13 +334,14 @@
 }
 
 .skipped {
-  opacity: 0.55;
+  color: var(--text-faint);
+  font-style: italic;
 }
 
 .serverOnlyNote {
   margin-top: 4px;
   font-size: 11px;
-  color: var(--layer-server);
+  color: color-mix(in srgb, var(--layer-server) 65%, var(--text));
 }
 
 .muted {

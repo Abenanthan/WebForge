@@ -1,12 +1,8 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { basicSetup } from 'codemirror';
-import { EditorState, Prec, StateEffect, StateField } from '@codemirror/state';
+import { Compartment, EditorState, Prec, StateEffect, StateField } from '@codemirror/state';
 import { Decoration, EditorView, keymap } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
-import { html } from '@codemirror/lang-html';
-import { css } from '@codemirror/lang-css';
-import { javascript } from '@codemirror/lang-javascript';
-import { php } from '@codemirror/lang-php';
 import { setDiagnostics } from '@codemirror/lint';
 import { webforgeEditorTheme } from './editorTheme.js';
 import styles from './CodeEditor.module.css';
@@ -30,13 +26,28 @@ const highlightField = StateField.define({
   provide: (field) => EditorView.decorations.from(field),
 });
 
-const LANGUAGES = {
-  html: () => html(),
-  css: () => css(),
-  javascript: () => javascript(),
-  jsx: () => javascript({ jsx: true }),
-  php: () => php({ plain: true }),
+// Language grammars are loaded on first use (PHP, for example, is only needed by the Server Lab),
+// keeping them out of the editor's initial download.
+const LANGUAGE_LOADERS = {
+  html: () => import('@codemirror/lang-html').then((m) => m.html()),
+  css: () => import('@codemirror/lang-css').then((m) => m.css()),
+  javascript: () => import('@codemirror/lang-javascript').then((m) => m.javascript()),
+  jsx: () => import('@codemirror/lang-javascript').then((m) => m.javascript({ jsx: true })),
+  php: () => import('@codemirror/lang-php').then((m) => m.php({ plain: true })),
 };
+const languagePromises = new Map();
+const loadedLanguages = new Map(); // resolved extensions, applied synchronously once known
+
+function loadLanguage(language) {
+  const key = LANGUAGE_LOADERS[language] ? language : 'javascript';
+  if (!languagePromises.has(key)) {
+    languagePromises.set(key, LANGUAGE_LOADERS[key]().then((ext) => {
+      loadedLanguages.set(key, ext);
+      return ext;
+    }));
+  }
+  return languagePromises.get(key);
+}
 
 /**
  * CodeMirror 6 editor for multiple documents.
@@ -55,6 +66,7 @@ export const CodeEditor = forwardRef(function CodeEditor(
   const viewRef = useRef(null);
   const statesRef = useRef(new Map());
   const currentDocRef = useRef(docId);
+  const languageConf = useRef(new Compartment());
   const callbacks = useRef({ onChange, onRun, onSave });
   callbacks.current = { onChange, onRun, onSave };
 
@@ -68,11 +80,15 @@ export const CodeEditor = forwardRef(function CodeEditor(
           { key: 'Mod-Enter', run: () => { callbacks.current.onRun?.(); return true; } },
           { key: 'Mod-s', preventDefault: true, run: () => { callbacks.current.onSave?.(); return true; } },
         ])),
-        (LANGUAGES[language] ?? LANGUAGES.javascript)(),
+        languageConf.current.of(loadedLanguages.get(LANGUAGE_LOADERS[language] ? language : 'javascript') ?? []),
         webforgeEditorTheme,
         highlightField,
         EditorState.readOnly.of(readOnly),
-        EditorView.contentAttributes.of({ 'aria-label': ariaLabel ?? `${docId} editor` }),
+        EditorView.contentAttributes.of({
+          'aria-label': ariaLabel ?? `${docId} editor`,
+          // Always in the tab order (read-only content is not contenteditable), so keyboard users can scroll it.
+          tabindex: '0',
+        }),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) callbacks.current.onChange?.(update.state.doc.toString());
         }),
@@ -113,6 +129,17 @@ export const CodeEditor = forwardRef(function CodeEditor(
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docId, value]);
+
+  // Apply the document's language once its grammar has loaded.
+  useEffect(() => {
+    let active = true;
+    loadLanguage(language).then((ext) => {
+      if (active) viewRef.current?.dispatch({ effects: languageConf.current.reconfigure(ext) });
+    });
+    return () => {
+      active = false;
+    };
+  }, [language, docId]);
 
   // Show runtime/syntax errors inside the editor.
   useEffect(() => {

@@ -42,6 +42,12 @@ final class Request
         );
     }
 
+    /** Build a request directly (used by the test suite; production uses fromGlobals). */
+    public static function create(string $method, string $path, array $query = [], string $body = '', array $headers = []): self
+    {
+        return new self(strtoupper($method), '/' . trim($path, '/'), $query, $body, array_change_key_case($headers));
+    }
+
     /** Client IP as seen by this server (no proxy headers trusted). */
     public function ip(): string
     {

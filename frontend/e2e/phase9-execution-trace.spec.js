@@ -43,18 +43,21 @@ test.describe('Execution Trace: full-stack form', () => {
     await page.getByRole('link', { name: 'Open in the explorer' }).click();
     await expect(page).toHaveURL(/\/trace\?id=[0-9a-f-]{36}$/);
     await expect(page.getByRole('heading', { name: 'Full-stack form: add "Kavya Nair"' })).toBeVisible();
-    await expect(page.getByText('21 steps').first()).toBeVisible();
+    // Step count depends on the server work done (e.g. progress updates), so read it from the viewer.
+    const stepsText = await page.getByText(/^\d+ steps$/).first().textContent();
+    const total = Number(stepsText.split(' ')[0]);
+    expect(total).toBeGreaterThanOrEqual(21);
 
     await page.getByRole('tab', { name: 'Waterfall' }).click();
     const timeline = page.getByRole('list', { name: 'Trace timeline' });
-    await expect(timeline.locator('li')).toHaveCount(21);
+    await expect(timeline.locator('li')).toHaveCount(total);
     await timeline.getByRole('button', { name: /Response generated/ }).click();
     await expect(page.getByRole('heading', { level: 3 })).toContainText('Response generated');
 
     await page.getByRole('button', { name: 'Replay' }).click();
     await expect(page.getByRole('button', { name: 'Stop' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Replay' })).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('heading', { level: 3 })).toContainText('21 of 21');
+    await expect(page.getByRole('heading', { level: 3 })).toContainText(`${total} of ${total}`);
 
     const download = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Export JSON' }).click();

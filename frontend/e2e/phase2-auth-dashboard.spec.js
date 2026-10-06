@@ -41,9 +41,11 @@ test('demo login shows a dashboard built from real API data, then logs out', asy
   await expect(page.getByRole('region', { name: 'Recent activity' })).toBeVisible();
   await shot(page, '02-dashboard');
 
-  // Live modules are links; planned modules are listed but are not links.
-  await expect(page.getByRole('link', { name: /Web Playground/ }).first()).toBeVisible();
-  await expect(page.getByRole('link', { name: /Projects/ })).toHaveCount(0);
+  // Every module is live, so each one in the sidebar is a link.
+  const nav = page.getByRole('navigation', { name: 'Modules' });
+  for (const name of ['Web Playground', 'Execution Trace', 'Projects', 'Learn & Assess']) {
+    await expect(nav.getByRole('link', { name: new RegExp(name) })).toBeVisible();
+  }
 
   // Theme toggle flips the theme and the choice survives a reload.
   const html = page.locator('html');

@@ -24,6 +24,7 @@ import {
  * status: 'ready'   → route is registered and fully functional
  *         'planned' → shown disabled with the phase it lands in (never a dead link)
  * layer:  colour token (--layer-*) used for the module's accent
+ * quiz:   slug of the related assessment (LabHeader links to it)
  */
 export const MODULE_GROUPS = [
   {
@@ -38,19 +39,19 @@ export const MODULE_GROUPS = [
     id: 'client',
     label: 'Client-side Labs',
     modules: [
-      { id: 'web-playground', title: 'Web Playground', path: '/lab/web-playground', icon: Code, layer: 'render', status: 'ready',
+      { id: 'web-playground', title: 'Web Playground', path: '/lab/web-playground', icon: Code, layer: 'render', status: 'ready', quiz: 'html-css-fundamentals',
         description: 'HTML, CSS & JS editor with live preview and console.' },
-      { id: 'js-playground', title: 'JS Playground', path: '/lab/js-playground', icon: Braces, layer: 'state', status: 'ready',
+      { id: 'js-playground', title: 'JS Playground', path: '/lab/js-playground', icon: Braces, layer: 'state', status: 'ready', quiz: 'javascript-core',
         description: 'Run JavaScript and watch input → execution → output.' },
-      { id: 'dom-explorer', title: 'DOM Explorer', path: '/lab/dom-explorer', icon: Network, layer: 'dom', status: 'ready',
+      { id: 'dom-explorer', title: 'DOM Explorer', path: '/lab/dom-explorer', icon: Network, layer: 'dom', status: 'ready', quiz: 'dom-and-events',
         description: 'Inspect the DOM tree and mutate elements live.' },
-      { id: 'event-visualizer', title: 'Event Visualizer', path: '/lab/event-visualizer', icon: MousePointerClick, layer: 'event', status: 'ready',
+      { id: 'event-visualizer', title: 'Event Visualizer', path: '/lab/event-visualizer', icon: MousePointerClick, layer: 'event', status: 'ready', quiz: 'dom-and-events',
         description: 'Follow an event from user action to UI update.' },
-      { id: 'form-lab', title: 'Form Validation Lab', path: '/lab/form-lab', icon: ClipboardCheck, layer: 'validation', status: 'ready',
+      { id: 'form-lab', title: 'Form Validation Lab', path: '/lab/form-lab', icon: ClipboardCheck, layer: 'validation', status: 'ready', quiz: 'dom-and-events',
         description: 'Client-side vs server-side validation, side by side.' },
-      { id: 'ajax-monitor', title: 'AJAX Monitor', path: '/lab/ajax-monitor', icon: ArrowLeftRight, layer: 'network', status: 'ready',
+      { id: 'ajax-monitor', title: 'AJAX Monitor', path: '/lab/ajax-monitor', icon: ArrowLeftRight, layer: 'network', status: 'ready', quiz: 'ajax-and-http',
         description: 'Send real async requests and inspect every byte.' },
-      { id: 'canvas-studio', title: 'Canvas Studio', path: '/lab/canvas-studio', icon: Palette, layer: 'dom', status: 'ready',
+      { id: 'canvas-studio', title: 'Canvas Studio', path: '/lab/canvas-studio', icon: Palette, layer: 'dom', status: 'ready', quiz: 'html-css-fundamentals',
         description: 'Draw with the Canvas API and pointer events.' },
     ],
   },
@@ -58,9 +59,9 @@ export const MODULE_GROUPS = [
     id: 'server',
     label: 'Server-side Labs',
     modules: [
-      { id: 'server-lab', title: 'Server Lab', path: '/lab/server-lab', icon: Server, layer: 'server', status: 'ready',
+      { id: 'server-lab', title: 'Server Lab', path: '/lab/server-lab', icon: Server, layer: 'server', status: 'ready', quiz: 'php-and-mysql',
         description: 'PHP processing, sessions and file handling, step by step.' },
-      { id: 'database-lab', title: 'Database Lab', path: '/lab/database-lab', icon: Database, layer: 'database', status: 'ready',
+      { id: 'database-lab', title: 'Database Lab', path: '/lab/database-lab', icon: Database, layer: 'database', status: 'ready', quiz: 'php-and-mysql',
         description: 'INSERT, SELECT, UPDATE, DELETE with the real SQL shown.' },
     ],
   },
@@ -68,11 +69,11 @@ export const MODULE_GROUPS = [
     id: 'react',
     label: 'React Labs',
     modules: [
-      { id: 'component-studio', title: 'Component Studio', path: '/lab/component-studio', icon: Component, layer: 'render', status: 'ready',
+      { id: 'component-studio', title: 'Component Studio', path: '/lab/component-studio', icon: Component, layer: 'render', status: 'ready', quiz: 'react-fundamentals',
         description: 'Component trees, JSX and props flowing between them.' },
-      { id: 'state-lab', title: 'State & Hooks', path: '/lab/state-lab', icon: Activity, layer: 'state', status: 'ready',
+      { id: 'state-lab', title: 'State & Hooks', path: '/lab/state-lab', icon: Activity, layer: 'state', status: 'ready', quiz: 'react-fundamentals',
         description: 'useState, useEffect and every re-render they cause.' },
-      { id: 'routing-visualizer', title: 'Routing Visualizer', path: '/lab/routing-visualizer', icon: Route, layer: 'router', status: 'ready',
+      { id: 'routing-visualizer', title: 'Routing Visualizer', path: '/lab/routing-visualizer', icon: Route, layer: 'router', status: 'ready', quiz: 'react-fundamentals',
         description: 'Watch the router match paths and render components.' },
     ],
   },
@@ -80,11 +81,11 @@ export const MODULE_GROUPS = [
     id: 'insight',
     label: 'Insight',
     modules: [
-      { id: 'execution-trace', title: 'Execution Trace', path: '/trace', icon: Waypoints, layer: 'network', status: 'ready', signature: true,
+      { id: 'execution-trace', title: 'Execution Trace', path: '/trace', icon: Waypoints, layer: 'network', status: 'ready', quiz: 'ajax-and-http', signature: true,
         description: 'See one operation travel through every layer of the stack.' },
-      { id: 'projects', title: 'Projects', path: '/projects', icon: FolderKanban, layer: 'database', status: 'planned', phase: 10,
+      { id: 'projects', title: 'Projects', path: '/projects', icon: FolderKanban, layer: 'database', status: 'ready',
         description: 'Save, open and manage your experiments.' },
-      { id: 'learn', title: 'Learn & Assess', path: '/learn', icon: GraduationCap, layer: 'state', status: 'planned', phase: 10,
+      { id: 'learn', title: 'Learn & Assess', path: '/learn', icon: GraduationCap, layer: 'state', status: 'ready',
         description: 'Quizzes, history and concept mastery.' },
     ],
   },

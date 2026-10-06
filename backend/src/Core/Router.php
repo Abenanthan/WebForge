@@ -17,7 +17,13 @@ final class Router
     public function add(string $method, string $pattern, callable|array $handler, array $options = []): void
     {
         $regex = '#^' . preg_replace('#\{([a-zA-Z_]+)\}#', '(?P<$1>[^/]+)', $pattern) . '$#';
-        $this->routes[] = ['method' => $method, 'regex' => $regex, 'handler' => $handler, 'options' => $options];
+        $this->routes[] = ['method' => $method, 'pattern' => $pattern, 'regex' => $regex, 'handler' => $handler, 'options' => $options];
+    }
+
+    /** @return list<array{method:string, pattern:string, options:array}> the route table (for tests and docs) */
+    public function routes(): array
+    {
+        return array_map(static fn(array $r) => ['method' => $r['method'], 'pattern' => $r['pattern'], 'options' => $r['options']], $this->routes);
     }
 
     public function get(string $p, callable|array $h, array $o = []): void    { $this->add('GET', $p, $h, $o); }

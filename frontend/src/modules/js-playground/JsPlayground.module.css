@@ -242,8 +242,15 @@
   border-left-color: var(--layer);
 }
 
+/* Not executed yet: marked without lowering text contrast (opacity would fail WCAG AA). */
 .eventFuture {
-  opacity: 0.45;
+  border-left: 3px dashed var(--border-strong);
+  font-style: italic;
+}
+
+.eventFuture .kind {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--border-strong);
 }
 
 .eventIndex {
@@ -257,7 +264,7 @@
   padding: 0 6px;
   border-radius: 4px;
   background: color-mix(in srgb, var(--layer) 15%, transparent);
-  color: var(--layer);
+  color: color-mix(in srgb, var(--layer) 65%, var(--text));
   font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;

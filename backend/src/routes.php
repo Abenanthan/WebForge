@@ -7,6 +7,8 @@ use WebForge\Controllers\DemoController;
 use WebForge\Controllers\FileLabController;
 use WebForge\Controllers\ExperimentController;
 use WebForge\Controllers\FormLabController;
+use WebForge\Controllers\LearnController;
+use WebForge\Controllers\QuizController;
 use WebForge\Controllers\ProjectController;
 use WebForge\Controllers\ServerLabController;
 use WebForge\Controllers\SessionLabController;
@@ -109,6 +111,15 @@ return static function (Router $r): void {
     $r->post('/api/traces', [TraceController::class, 'store'], $auth);
     $r->get('/api/traces/{uid}', [TraceController::class, 'show'], $auth);
     $r->delete('/api/traces/{uid}', [TraceController::class, 'destroy'], $auth);
+
+    // --- Learn & Assess -------------------------------------------------------
+    $r->get('/api/quizzes', [QuizController::class, 'index'], $auth);
+    $r->get('/api/quizzes/{slug}', [QuizController::class, 'show'], $auth);
+    $r->post('/api/quizzes/{slug}/attempts', [QuizController::class, 'submit'], $auth);
+    $r->get('/api/attempts', [QuizController::class, 'attempts'], $auth);
+    $r->get('/api/attempts/{id}', [QuizController::class, 'attempt'], $auth);
+    $r->get('/api/activity', [LearnController::class, 'activity'], $auth);
+    $r->get('/api/progress', [LearnController::class, 'progress'], $auth);
 
     // --- Experiments (activity tracking) -----------------------------------
     $r->post('/api/experiments/{slug}/runs', [ExperimentController::class, 'recordRun'], $auth);

@@ -161,7 +161,7 @@ function RecentTraces({ traces }) {
     <ul className={styles.rowList}>
       {traces.map((t) => (
         <li key={t.traceId} className={styles.row}>
-          <span className={`${styles.statusDot} ${t.status === 'error' ? styles.statusError : ''}`} aria-label={t.status} />
+          <span className={`${styles.statusDot} ${t.status === 'error' ? styles.statusError : ''}`} role="img" aria-label={t.status} />
           <Link className={styles.rowTitle} to={`/trace?id=${t.traceId}`}>{t.label}</Link>
           <span className={styles.rowMeta}>{t.steps} steps · {formatMs(t.totalMs)}</span>
           <time className={styles.rowTime} dateTime={t.createdAt}>{relativeTime(t.createdAt)}</time>
